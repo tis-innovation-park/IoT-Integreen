@@ -1,0 +1,22 @@
+{
+	"name": "ArduinoTemp",
+	"description": "Temperature measurement on Arduino Uno",
+	"streams": {
+		"temp1": {
+			"channels": {
+				"celsius": {
+					"type": "number",
+					"unit": "degrees"
+				}
+			},
+			"description": "Temperature 1",
+			"type": "sensor"
+		}
+	},
+	"customFields": {
+	},
+	"actions": [
+	],
+	"properties": [
+	]
+}

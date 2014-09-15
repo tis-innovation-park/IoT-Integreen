@@ -1,0 +1,35 @@
+{
+	"groups": {
+		"ArduinoStarter": {
+			"soIds": [
+				"140480463137035f63e50dcb4413fb37a0b0522fd3389"
+			],
+			"stream": "temp1"
+		},
+		"ArduinoGrove": {
+			"soIds": [
+				"1405502700086833914e633dc45dd9c97d54f6f361b3c"
+			],
+			"stream": "temp1"
+		}
+	},
+	"streams": {
+		"sum": {
+			"pre-filter": "{$ArduinoStarter.}!=null && {$ArduinoGrove.}!=null",
+			"channels": {
+				"celsius": {
+					"current-value": "{$ArduinoStarter.channels.celsius.current-value} + {$ArduinoGrove.channels.celsius.current-value}",
+					"type": "number"
+				}
+			}
+		},
+		"avg": {
+			"channels": {
+				"celsius": {
+					"current-value": "{$sum.channels.celsius.current-value} / 2",
+					"type": "number"
+				}
+			}
+		}
+	}
+}

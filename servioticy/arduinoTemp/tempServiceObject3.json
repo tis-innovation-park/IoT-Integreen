@@ -1,0 +1,36 @@
+{
+	"name": "LEDControl",
+	"description": "LED control on Arduino Uno",
+	"streams": {
+	},
+	"customFields": {
+	},
+	"actions": [
+		{
+			"name": "led1on",
+			"action": "led1on"
+		},
+		{
+			"name": "led2on",
+			"action": "led2on"
+		},
+		{
+			"name": "led3on",
+			"action": "led3on"
+		},
+		{
+			"name": "led1off",
+			"action": "led1off"
+		},
+		{
+			"name": "led2off",
+			"action": "led2off"
+		},
+		{
+			"name": "led3off",
+			"action": "led3off"
+		}
+	],
+	"properties": [
+	]
+}
