@@ -7,9 +7,12 @@ Tool:
   Attention: when the returned dataset is big, the JSON records get splitted
   up in more transmission chunks in which case the tool may fail.
 
+# Docu about all frontends (open in webbrowser)
+http://ipchannels.integreen-life.bz.it/doc/
+
 # Meteo frontend
 
-# docu
+# docu (open in webbrowser)
 http://ipchannels.integreen-life.bz.it/MeteoFrontEnd/
 
 # get stations
