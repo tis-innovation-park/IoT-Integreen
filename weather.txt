@@ -1,0 +1,54 @@
+South Tyrol Weather Data
+========================
+
+by Matthias Dieter Wallnöfer, TIS innovation park, Bolzano/Bozen - Italy
+
+The weather data by the Meteorological Service is still not really open, but
+nevertheless we at TIS innovation park thought to make it available for
+Hackathon participants.
+We have requested an account "hackathon" which allows you to develop a
+prototype of your application. When you plan to commercialise, you should
+get in direct contact with the institution for an own account.
+
+The access is as follows (instructions by Dieter Peterlin, Meteorological
+Service - only in German):
+
+Hier die Zugangsdaten zum Webservice:
+
+Südtirol:
+https://wetter.ws.siag.it/Weather_V1.svc/web/getLastProvBulletin?lang=<sprache>
+
+<sprache>
+de = deutsch
+it = italiano
+en = english
+
+Derzeitiger Username und Passwort: hackathon
+
+Der XML Bericht für Südtirol wird an Werktagen (Mo-Sa) jeweils um 7:30 Uhr und
+11:00 Uhr aktualisiert, an Sonn- und Feiertagen erfolgt eine Aktualisierung um
+10:00 Uhr. Sämtliche Inhalte der XML Schnittstelle umfassen den Südtirolbericht
+sowie den Bergwetterbericht, vgl. www.provinz.bz.it/wetter.
+
+Anbei finden Sie außerdem eine Karte mit den genauen Positionen und den
+entsprechenden ID`s in der XML-Datei für Südtirol. Bitte positionieren Sie die
+Symbole in Ihrer Südtirolkarte am selben geographischen Platz.
+
+Die Temperaturwerte in der XML-Datei für Südtirol sind wie folgt den Orten
+zugeordnet:
+1 : Schlanders
+2 : Meran
+3 : Bozen
+4 : Sterzing
+5 : Brixen
+6 : Bruneck
+
+Die Verwendung dieses Services ist bis auf Widerruf kostenfrei. Sollten die
+Daten veröffentlicht werden muss eine klar ersichtliche Quellengangabe (©
+Landeswetterdienst Südtirol oder © Servizio meteo provinciale Alto Adige)
+eingebaut werden sowie ein Link auf unsere Seite www.provinz.bz.it/wetter oder
+www.provincia.bz.it/meteo gesetzt werden.
+
+
+Mit freundlichen Grüßen
+Dieter Peterlin
