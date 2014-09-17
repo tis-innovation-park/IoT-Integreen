@@ -1,5 +1,11 @@
 # by Matthias Dieter Wallnöfer, TIS innovation park, Bolzano/Bozen - Italy
 
+# ATTENTION: please specify the correct location of ServIoTicy!
+# Substitute "Authorization" with your personal API key and change
+# the host "localhost:8080" into "api.servioticy.com" when using GlueThings
+# (the public ServIoTicy cloud).
+# The same holds for all example programs and Node-RED flows.
+
 There are the following service object templates provided:
 - serviceObject: .json + .id, intended for use with Arduino board +
   temperature sensor (in our case Arduino Starter Kit with "Love-o-Meter"
