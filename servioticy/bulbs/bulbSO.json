@@ -1,0 +1,24 @@
+{
+	"name": "Bulbs",
+	"description": "Philips Hue Bulbs control",
+	"streams": {
+	},
+	"customFields": {
+	},
+	"actions": [
+		{
+			"name": "on",
+			"action": "on"
+		},
+		{
+			"name": "off",
+			"action": "off"
+		},
+		{
+			"name": "alert",
+			"action": "alert"
+		}
+	],
+	"properties": [
+	]
+}
