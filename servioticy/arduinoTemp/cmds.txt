@@ -36,7 +36,10 @@ Other stuff:
   the curl commands: | ./convTimeServ.js
   Works eg. for getting SO data (= updates).
   Attention: when the returned dataset is big, the JSON records get splitted
-  up in more transmission chunks in which case the tool may fail. 
+  up in more transmission chunks in which case the tool may fail.
+
+# Full documentation about the API
+http://docs.servioticy.com/
 
 # getting all SOs
 curl -i -H "Authorization: M2JhMmRkMDEtZTAwZi00ODM5LThmYTktOGU4NjNjYmJmMjc5N2UzNzYwNWItNTc2ZS00MGVlLTgyNTMtNTgzMmJhZjA0ZmIy" http://localhost:8080/
