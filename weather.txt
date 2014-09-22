@@ -8,7 +8,7 @@ nevertheless we at TIS innovation park thought to make it available for
 Hackathon participants.
 We have requested an account "hackathon" which allows you to develop a
 prototype of your application. When you plan to commercialise, you should
-get in direct contact with the institution for an own account.
+get in direct contact with the institution for your own account.
 
 The access is as follows (instructions by Dieter Peterlin, Meteorological
 Service - only in German):
