@@ -2,7 +2,6 @@
 
 /**
  * Converts ServIoTicy Unix timestamps into cleartext date.
- * Works only if the JSON objects are not splitted up in more than one chunk
  *
  * Copyright 2014 Matthias Dieter Wallnöfer, TIS innovation park,
  *                                           Bolzano/Bozen - Italy
@@ -24,10 +23,15 @@
 
 process.stdin.setEncoding('utf8');
 
+var buffer = '';
 process.stdin.on('readable', function() {
     var chunk = process.stdin.read();
-    if (chunk == null) return;
-    var lines = chunk.split('\n');
+    if (chunk != null) {
+        buffer += chunk;
+    }
+});
+process.stdin.on('end', function() {
+    var lines = buffer.split('\n');
     lines.forEach(function(line) {
         try {
             // if valid JSON
