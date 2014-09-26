@@ -16,13 +16,4 @@ Content:
   (ITS) and ServIoTicy (IoT)
 - weather.txt - Howto for using South Tyrol weather data
 
-More:
-
-- http://www.opensasa.info - http://sasabus.org/opendata - SASA public
-  transport data
-- http://www.provinz.bz.it/informatik/kartografie/Geoportal.asp - "Dienste für
-  Tourismus" - Open GIS data of the province
-- http://www.dati.gov.it/, http://dati.camera.it, http://spcdata.digitpa.gov.it
-  - Italian open data catalogs
-- http://publicdata.eu - European open data catalog
-- http://datacatalogs.org, http://datahub.io - International open data catalogs
+Other contents on the wiki.
