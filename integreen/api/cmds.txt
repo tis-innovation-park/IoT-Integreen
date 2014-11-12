@@ -1,5 +1,12 @@
 # by Matthias Dieter Wallnöfer, TIS innovation park, Bolzano/Bozen - Italy
 
+* * * Notice * * *: please do not overload the webservices and use them in
+a fair way. Try to reduce information fetching as much as possible, also
+to provide other users with enough bandwith. Thanks!
+For any further need (malfunction, downtime, enhancements, usage
+clarifications...) please contact TIS innovation park,
+department "Free Software & Open Technologies" at open@tis.bz.it.
+
 Tool:
 - convTimeInte.js: converts UNIX timestamps into cleartext dates, is appended to
   the curl commands: | ./convTimeInte.js
