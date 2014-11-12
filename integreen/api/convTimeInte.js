@@ -37,10 +37,20 @@ process.stdin.on('end', function() {
             // if valid JSON
             var data = JSON.parse(line);
             if (typeof(data) == 'object') {
-                // array
-                data.forEach(function(record) {
-                    record.timestamp = new Date(record.timestamp).toString();
-                });
+                if (Array.isArray(data)) {
+                    // array
+                    data.forEach(function(record) {
+                        if (record.timestamp != undefined)
+                            record.timestamp = new Date(record.timestamp).toString();
+                        if (record.created_on != undefined)
+                            record.created_on = new Date(record.created_on).toString();
+                    });
+                } else {
+                    if (data.timestamp != undefined)
+                        data.timestamp = new Date(data.timestamp).toString();
+                    if (data.created_on != undefined)
+                        data.created_on = new Date(data.created_on).toString();
+                }
             } else if (typeof(data) == 'number') {
                 // only timestamp
                 data = new Date(data).toString();
