@@ -37,3 +37,32 @@ curl -i "http://ipchannels.integreen-life.bz.it/MeteoFrontEnd/rest/get-records?s
 
 # get date of last record
 curl -i "http://ipchannels.integreen-life.bz.it/MeteoFrontEnd/rest/get-date-of-last-record?station=83200MS"
+
+# Parking frontend
+
+# get records in timeframe (station=103 Waltherplatz/Piazza Walther,
+# type name=free, from=06/02/2013, to=06/02/2013 10:55, 1 record)
+curl -i "http://ipchannels.integreen-life.bz.it/parkingFrontEnd/rest/get-records-in-timeframe?station=103&name=free&from=1360105200000&to=1360144500000"
+
+# get records in timeframe (station=103 Waltherplatz/Piazza Walther,
+# type name=free, from=06/02/2013, to=06/02/2013 12:00, 13 records)
+curl -i "http://ipchannels.integreen-life.bz.it/parkingFrontEnd/rest/get-records-in-timeframe?station=103&name=free&from=1360105200000&to=1360148400000"
+
+# get records in timeframe (station=103 Waltherplatz/Piazza Walther,
+# type name=free, from=06/02/2013, to=06/02/2013 20:00, 106 records)
+curl -i "http://ipchannels.integreen-life.bz.it/parkingFrontEnd/rest/get-records-in-timeframe?station=103&name=free&from=1360105200000&to=1360177200000"
+
+# get records in timeframe (station=103 Waltherplatz/Piazza Walther,
+# type name=forecast, from=01/07/2014, to=31/08/2014, 1177 records)
+curl -i "http://ipchannels.integreen-life.bz.it/parkingFrontEnd/rest/get-records-in-timeframe?station=103&name=Parking%20forecast&from=1404165600000&to=1409436000000"
+
+# get records in timeframe (station=103 Waltherplatz/Piazza Walther,
+# type name=forecast, from=01/07/2014, to=31/08/2014, period=3600, 912 records)
+curl -i "http://ipchannels.integreen-life.bz.it/parkingFrontEnd/rest/get-records-in-timeframe?station=103&name=Parking%20forecast&from=1404165600000&to=1409436000000&period=3600"
+
+# get last record (station=103 Waltherplatz/Piazza Walther,
+# type name=forecast)
+curl -i "http://localhost:8080/ParkingFrontEnd/rest/get-last-record?station=103&type=Parking%20forecast"
+
+# JSON records count (attention: use curl without "-i"!)
+# | sed "s/{/\n/g" | wc -l
