@@ -15,6 +15,19 @@ First thing you should do is to buy this equipment:
 If you have all this stuff you will have to compare everything together and if you want, you can add some sensors form the 4WDStarter Kit. (ATTENTION! Our scripts are only for the ultrasonic sensor and the servo motor to flip the robot)
 The original Arduino script and the Android phone app had plenty of bugs so we had to make big changes. [Here](http://www.google.com/url?q=http%3A%2F%2Fwww.instructables.com%2Fid%2FSimple-RC-car-for-beginners-Android-control-over-%2F&sa=D&sntz=1&usg=AFQjCNG8QoCKxEOKsWGcAQMe-jnU9oSa_g) you may download the original code (But I can assure you it will not work).
 
+## Software modifications
+
+### Arduino script
+
+The biggest problem here was the lack of correct C-like buffer handling. Buffers with missing 0-termination considered as strings or missing index out-of-bounds controls were common. Further we had to adapt the script for the ultrasonic sensor and the servo motor. Also the pin assignment of I/O has to be done here: which pin you use is your decision, but there are tight restrictions (motors need to be connected to PWM-capable ones, servo motors need Arduino's timer pins to be left free ecc.). Of course we had to solve some little problems here and there, in the delay, pin selection and so on, but we will show you also the assembled hardware to help you to understand and to assembly everything right.
+
+### Modifications on the phone app
+
+First of all we had to change the bluetooth MAC address because the original developer used another module. The default UI language had been Russian which we removed in favor of English. Then we introduced big improvements on both UI and technical side (general code refactoring, new servo control, rewritten touchscreen motor control, improved bluetooth connection stability). This all had been a lot of work, in particular we updated also to a newer Android version, but finally we got this for you.
+
+### Protocol
+
+
 ### ToDo
 
 
