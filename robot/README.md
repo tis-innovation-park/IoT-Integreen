@@ -12,6 +12,8 @@ First thing you should do is to buy this equipment:
 * A 125 x 95 [mm] piece of wood with a min thickness of 4mm.
 * Min. 3, 20mm flat head screws
 
+If you have all this stuff you will have to compare everything together and if you want, you can add some sensors form the 4WDStarter Kit. (ATTENTION! Our scripts are only for the ultrasonic sensor and the servo motor to flip the robot)
+The original Arduino script and the Android phone app had plenty of bugs so we had to make big changes. [Here](http://www.google.com/url?q=http%3A%2F%2Fwww.instructables.com%2Fid%2FSimple-RC-car-for-beginners-Android-control-over-%2F&sa=D&sntz=1&usg=AFQjCNG8QoCKxEOKsWGcAQMe-jnU9oSa_g) you may download the original code (But I can assure you it will not work).
 
 ### ToDo
 
