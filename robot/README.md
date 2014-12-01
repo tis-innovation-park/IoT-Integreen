@@ -31,8 +31,7 @@ First of all we had to change the bluetooth MAC address because the original dev
 |---------|---------------|-------------|---------|
 | Read EEPROM settings | ```Fr``` | Read the watchdog settings from Arduino EEPROM | ```Fr``` |
 | Response of read EEPROM settings (from Robot) | ```FData:(0|1|char #255)(0..9)(0..9)(0..9)\r\n``` | ```(0|1|char #255)..0``` means watchdog disabled - 999999ms, 1 means watchdog enabled with specified time, char #255 means factory default watchdog (EEPROM still empty) - 2500ms (0..9)(0..9)(0..9)..watchdog time in xxx00ms format (1/10 of seconds) | ```FData:0000\r\n```|
-| Write EEPROM settings | ```Fw(0|1)[(0..9)(0..9)(0..9)``` | Write the watchdog settings to Arduino EEPROM
-```(0|1)..0``` means watchdog disabled - 999999ms, 1 means watchdog enabled with specified time (0..9)(0..9)(0..9)..watchdog time in xxx00ms format (1/10 of seconds) | ```Fw1243``` |
+| Write EEPROM settings | ```Fw(0|1)[(0..9)(0..9)(0..9)``` | Write the watchdog settings to Arduino EEPROM ```(0|1)..0``` means watchdog disabled - ```999999ms```, 1 means watchdog enabled with specified time ```(0..9)(0..9)(0..9)```..watchdog time in xxx00ms format (1/10 of seconds) | ```Fw1243``` |
 
 
 
