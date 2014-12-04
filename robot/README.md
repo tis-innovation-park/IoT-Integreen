@@ -32,6 +32,14 @@ First of all we had to change the bluetooth MAC address because the original dev
 | Read EEPROM settings | ```Fr``` | Read the watchdog settings from Arduino EEPROM | ```Fr``` |
 | Response of read EEPROM settings (from Robot) | ```FData:(0|1|char #255)(0..9)(0..9)(0..9)\r\n``` | ```(0|1|char #255)..0``` means watchdog disabled - 999999ms, 1 means watchdog enabled with specified time, char #255 means factory default watchdog (EEPROM still empty) - 2500ms (0..9)(0..9)(0..9)..watchdog time in xxx00ms format (1/10 of seconds) | ```FData:0000\r\n```|
 | Write EEPROM settings | ```Fw(0|1)[(0..9)(0..9)(0..9)``` | Write the watchdog settings to Arduino EEPROM ```(0|1)..0``` means watchdog disabled - ```999999ms```, 1 means watchdog enabled with specified time ```(0..9)(0..9)(0..9)```..watchdog time in xxx00ms format (1/10 of seconds) | ```Fw1243``` |
+| Response of write EEPROM response (from Robot) | ```FWOK\r\n``` | Successful update | ```FWOK\r\n```|
+| EEPROM cmd execution | ```\t``` | Applies transmitted EEPROM command | ```\ţ``` |
+| Motor left | ```L<[-](0..2)(0..9)(0..9)>``` | Controls the 2 left motors [-]..inverted direction if present (0..2)(0..9)(0..9)..velocity from 0..255 | ```L-255``` |
+| Motor right | ```R<[-](0..2)(0..9)(0..9)>``` | Controls the 2 right motors [-]..inverted direction if present
+(0..2)(0..9)(0..9)..velocity from 0..255 | ```R120``` |
+| Horn | ```H(1\|0)``` | Controls the horn signal (pin 13) (1\|0)..pin 13 on/off, connected to a LED on the Arduino board | ```H1``` |
+| Servo | ```S(0..2)(0..9)(0..9``` | Controls the servo flip motor (0..2)(0..9)(0..9)..angle from 0..255, 0..flipper on the back, 255..flipper on the front | ```S0```|
+|-------|--------------------------|--------------|---------|
 
 
 
