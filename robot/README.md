@@ -61,7 +61,7 @@ Also you could add some very cool sensors like infrared sensor, sound sensor, te
 
 ### Licensing
 
-The ownership of the original software belongs to tolik777 [http://www.instructables.com/id/Simple-RC-car-for-beginners-Android-control-over-/](http://www.instructables.com/id/Simple-RC-car-for-beginners-Android-control-over-/). As far as it is stated, the author has released instructions and code under Creative Commons, so we need to keep it the same.
+The ownership of the original software belongs to tolik777 [http://www.instructables.com/id/Simple-RC-car-for-beginners-Android-control-over-/](http://www.instructables.com/id/Simple-RC-car-for-beginners-Android-control-over-/). As far as it is stated, the author has released instructions and code under Creative Commons Attribution-NonCommercial-ShareAlike 2.5 Generic License, so we need to keep it the same.
 
 ### Future plans
 
