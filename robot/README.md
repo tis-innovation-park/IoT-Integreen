@@ -38,7 +38,7 @@ First of all we had to change the bluetooth MAC address because the original dev
 | Motor right | ```R<[-](0..2)(0..9)(0..9)>``` | Controls the 2 right motors [-]..inverted direction if present \(0..2)(0..9)(0..9)..velocity from 0..255 | ```R120``` |
 | Horn | ```H(1\|0)``` | Controls the horn signal (pin 13) (1\|0)..pin 13 on/off, connected to a LED on the Arduino board | ```H1``` |
 | Servo | ```S(0..2)(0..9)(0..9``` | Controls the servo flip motor (0..2)(0..9)(0..9)..angle from 0..255, 0..flipper on the back, 255..flipper on the front | ```S0```|
-
+| Motor/horn/servo cmd execution | ```\r``` | Applies transmitted motor/horn/servo commands | ```\r``` |
 
 
 
