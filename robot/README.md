@@ -41,6 +41,15 @@ First of all we had to change the bluetooth MAC address because the original dev
 | Motor/horn/servo cmd execution | ```\r``` | Applies transmitted motor/horn/servo commands | ```\r``` |
 
 
+### Composition of the hardware
+
+1. Composition of the Arduino (*Bluetooth shield already mounted) and the motor driver:
+     * You will have a black, white, gray, violet, bus-wire which is for the connection between the Arduino and the motor driver. The pin of the black wire goes into the ENA slot and the rest in the order of the colors next to each other in the 5V, 5V, and the ENB slot. On the Arduino or respectively the Bluetooth shield, the violet wire of the bus goes into the slot 2, the gray into the slot 3, the black one into the slot 4 and the white one into the slot 5.
+2. Composition of the ultrasonic sensor with the bluetooth shield:
+* Trigger Pin 8
+* Echo Pin 12
+* and naturally 5V and GND
+
 
 This is the code for TIS' car robot project based on the Pirate - 4WD Mobile
 Platform. It is a fork of http://www.instructables.com/id/Simple-RC-car-for-beginners-Android-control-over-/?ALLSTEPS.
