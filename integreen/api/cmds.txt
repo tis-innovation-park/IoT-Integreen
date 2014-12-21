@@ -62,7 +62,7 @@ curl -i "http://ipchannels.integreen-life.bz.it/parkingFrontEnd/rest/get-records
 
 # get last record (station=103 Waltherplatz/Piazza Walther,
 # type name=forecast)
-curl -i "http://localhost:8080/ParkingFrontEnd/rest/get-last-record?station=103&type=Parking%20forecast"
+curl -i "http://ipchannels.integreen-life.bz.it/parkingFrontEnd/rest/get-last-record?station=103&type=Parking%20forecast"
 
 # JSON records count (attention: use curl without "-i"!)
 # | sed "s/{/\n/g" | wc -l
