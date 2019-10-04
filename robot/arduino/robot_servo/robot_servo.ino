@@ -80,7 +80,7 @@ void timer_init() {
   else if(sw_autoOFF == '0'){        
     autoOFF = 999999;
   }
-  else if(sw_autoOFF == 255){
+  else{
     autoOFF = 2500;                      // if the EEPROM is blank, dafault value is 2.5 sec
   }
 }
