@@ -70,7 +70,7 @@ void setup() {
 void timer_init() {
   uint8_t sw_autoOFF = EEPROM.read(0);   // read EEPROM "is activated or not stopping the car when losing connection"
   if(sw_autoOFF == '1'){                 // if activated
-    char var_Data[4];
+    char var_Data[4] = { 0, 0, 0, 0 };
     var_Data[0] = EEPROM.read(1);
     var_Data[1] = EEPROM.read(2);
     var_Data[2] = EEPROM.read(3);
