@@ -30,14 +30,14 @@ First of all we had to change the bluetooth MAC address because the original dev
 | Purpose | Syntax [EBNF] | Description | Example |
 |---------|---------------|-------------|---------|
 | Read EEPROM settings | ```Fr``` | Read the watchdog settings from Arduino EEPROM | ```Fr``` |
-| Response of read EEPROM settings (from Robot) | ```FData:(0|1|char #255)(0..9)(0..9)(0..9)\r\n``` | ```(0|1|char #255)..0``` means watchdog disabled - 999999ms, 1 means watchdog enabled with specified time, char #255 means factory default watchdog (EEPROM still empty) - 2500ms (0..9)(0..9)(0..9)..watchdog time in xxx00ms format (1/10 of seconds) | ```FData:0000\r\n```|
-| Write EEPROM settings | ```Fw(0|1)[(0..9)(0..9)(0..9)``` | Write the watchdog settings to Arduino EEPROM ```(0|1)..0``` means watchdog disabled - ```999999ms```, 1 means watchdog enabled with specified time ```(0..9)(0..9)(0..9)```..watchdog time in xxx00ms format (1/10 of seconds) | ```Fw1243``` |
+| Response of read EEPROM settings (from Robot) | ```FData:(0\|1\|char #255)(0..9)(0..9)(0..9)\r\n``` | ```0``` means watchdog disabled - 999999ms, ```1``` means watchdog enabled with the specified time ```(0..9)(0..9)(0..9)``` in the xxx00ms format (1/10 of seconds), char #255 means factory default watchdog 2500ms  | ```FData:0000\r\n```|
+| Write EEPROM settings | ```Fw(0\|1(0..9)(0..9)(0..9)|char #255)``` | Write the watchdog settings to Arduino EEPROM ```0``` disable watchdog (set to 999999ms), ```1``` enable watchdog with the specified time ```(0..9)(0..9)(0..9)```..in the xxx00ms format (1/10 of seconds), char #255 means factory default watchdog 2500ms   | ```Fw1243``` |
 | Response of write EEPROM response (from Robot) | ```FWOK\r\n``` | Successful update | ```FWOK\r\n```|
 | EEPROM cmd execution | ```\t``` | Applies transmitted EEPROM command | ```\ţ``` |
-| Motor left | ```L<[-](0..2)(0..9)(0..9)>``` | Controls the 2 left motors [-]..inverted direction if present (0..2)(0..9)(0..9)..velocity from 0..255 | ```L-255``` |
-| Motor right | ```R<[-](0..2)(0..9)(0..9)>``` | Controls the 2 right motors [-]..inverted direction if present \(0..2)(0..9)(0..9)..velocity from 0..255 | ```R120``` |
-| Horn | ```H(1\|0)``` | Controls the horn signal (pin 13) (1\|0)..pin 13 on/off, connected to a LED on the Arduino board | ```H1``` |
-| Servo | ```S(0..2)(0..9)(0..9``` | Controls the servo flip motor (0..2)(0..9)(0..9)..angle from 0..255, 0..flipper on the back, 255..flipper on the front | ```S0```|
+| Motor left | ```L<[-](0..2)(0..9)(0..9)>``` | Controls the 2 left motors [```-```]..inverted direction if present ```(0..2)(0..9)(0..9)```..speed from 0..255 | ```L-255``` |
+| Motor right | ```R<[-](0..2)(0..9)(0..9)>``` | Controls the 2 right motors [```-```]..inverted direction if present ```(0..2)(0..9)(0..9)```..speed from 0..255 | ```R120``` |
+| Horn | ```H(1\|0)``` | Controls the horn signal (pin 13) (```1\|0```)..pin 13 on/off, connected to a LED on the Arduino board | ```H1``` |
+| Servo | ```S(0..2)(0..9)(0..9)``` | Controls the servo flipper motor ```(0..2)(0..9)(0..9)```..angle from 0..255 (0..on the back, 255..on the front) | ```S0```|
 | Motor/horn/servo cmd execution | ```\r``` | Applies transmitted motor/horn/servo commands | ```\r``` |
 
 
@@ -67,10 +67,7 @@ The ownership of the original software belongs to tolik777 [http://www.instructa
 
 In the future the RC car could become a sensor car. With many different sensors it would be able to reach places where humans can’t go and take sensor values from the air, the temperature humidity and so on. A first step to the future could be the addition of an autonomous camera on the top of the car.
 The second step would be the substitution of the bluetooth shield with a Wi-Fi shield to increase the connection range and make the car accessible from more than one client. Also the type of clients would increase, since bluetooth is limited to smartphones and tablets.
-Also it could be thought as an autonomous car in the basement of vine production farms, to take over the values of CO2 in there. The car would send a signal to a LED if the values are too high for a human to breathe. So the farmer sees that he should not go into the basement without turning on the ventilation.
-
-
-
+Also it could be thought as an autonomous car in the basement of vine production farms, to take over the values of CO2 in there. The car would send a signal to a LED if the values are too high for a human to breath. So the farmer sees that he should not go into the basement without turning on the ventilation.
 
 This is the code for TIS' car robot project based on the Pirate - 4WD Mobile
 Platform. It is a fork of http://www.instructables.com/id/Simple-RC-car-for-beginners-Android-control-over-/?ALLSTEPS.
