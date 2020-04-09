@@ -95,6 +95,12 @@ void timer_init() {
 void loop() {
   if (mySerial.available() > 0) {          // if received UART data
     incomingByte = mySerial.read();        // read byte
+
+    if (incomingByte == 'C') {           // BLE AT-09 "Connected\r\n" sequence
+      while (mySerial.read() != '\n');
+      return;
+    }
+
     if(incomingByte == cmdL) {           // if received data for left motor L
       command = cmdL;                    // current command
       memset(L_Data,0,sizeof(L_Data));   // clear array
