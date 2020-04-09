@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnClickListener {
 
-	Button btnActAccelerometer, btnActButtons, btnActMCU, btnActTouch, btnActAbout;
+	Button btnActAccelerometer, btnActButtons, btnActServo, btnActTouch, btnActAbout;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -21,7 +21,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_main);
 	    
-	    TextView textv = (TextView) findViewById(R.id.textView1);
+	    TextView textv = (TextView) findViewById(R.id.textView_appName);
 	    textv.setShadowLayer(1, 3, 3, Color.GRAY);
 	
 	    btnActAccelerometer = (Button) findViewById(R.id.button_accel);
@@ -30,8 +30,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	    btnActButtons = (Button) findViewById(R.id.button_buttons);
 	    btnActButtons.setOnClickListener(this);
 	    
-	    btnActMCU = (Button) findViewById(R.id.button_mcu);
-	    btnActMCU.setOnClickListener(this);
+	    btnActServo = (Button) findViewById(R.id.button_servo);
+	    btnActServo.setOnClickListener(this);
 	    
 	    btnActTouch = (Button) findViewById(R.id.button_touch);
 	    btnActTouch.setOnClickListener(this);
@@ -54,8 +54,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	    	Intent intent_touch = new Intent(this, ActivityTouch.class);
 	    	startActivity(intent_touch);
 	    	break;
-	    case R.id.button_mcu:
-	    	Intent intent_mcu = new Intent(this, ActivityMCU.class);
+	    case R.id.button_servo:
+	    	Intent intent_mcu = new Intent(this, ActivityServo.class);
 	    	startActivity(intent_mcu);
 	    	break;
 	    case R.id.button_about:
@@ -77,7 +77,11 @@ public class MainActivity extends Activity implements OnClickListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	  
 		Intent intent = new Intent();
-		intent.setClass(MainActivity.this, SetPreferenceActivity.class);
+		if (item.getItemId() == R.id.menu_settings) {
+			intent.setClass(MainActivity.this, SetPreferenceActivity.class);
+		} else if (item.getItemId() == R.id.menu_mcu) {
+			intent.setClass(MainActivity.this, ActivityMCU.class);
+		}
 		startActivityForResult(intent, 0); 
 	  
 		return true;

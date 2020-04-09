@@ -62,7 +62,7 @@ public class ActivityButtons extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_buttons);
-		
+				
 		loadPref();
 		
 	    bl = new cBluetooth(this, new Handler(myHandlerCallback));

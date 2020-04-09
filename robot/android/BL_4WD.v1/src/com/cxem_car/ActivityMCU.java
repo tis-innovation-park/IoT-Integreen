@@ -32,7 +32,7 @@ public class ActivityMCU  extends Activity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mcu);
-
+        
         btn_flash_Read = (Button) findViewById(R.id.flash_Read);
         btn_flash_Write = (Button) findViewById(R.id.flash_Write);
         cb_AutoOFF = (CheckBox) findViewById(R.id.cBox_AutoOFF);

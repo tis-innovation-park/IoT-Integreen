@@ -32,6 +32,12 @@
 			 android:summary="Symbol for optional command (for example horn)"
 			 android:defaultValue="@+string/default_commandHorn" />
 		
+		<EditTextPreference
+		    android:key="pref_commandServo"
+		    android:title="Symbol for servo motor"
+		    android:summary="Command symbol for servo motor"
+		    android:defaultValue="@+string/default_commandServo" />
+		
 		<CheckBoxPreference
 			android:key="pref_Debug"
 			android:title="Debug info"

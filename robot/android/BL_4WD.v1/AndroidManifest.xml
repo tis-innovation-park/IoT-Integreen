@@ -1,20 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cxem_car"
-    android:versionCode="2"
-    android:versionName="1.0tis" >
+    android:versionCode="3"
+    android:versionName="@string/app_version" >
 
     <uses-sdk
         android:minSdkVersion="11"
-        android:targetSdkVersion="15" />
-    
+        android:targetSdkVersion="20" />
+
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-	<uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <application
+        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:allowBackup="true" >
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
@@ -33,22 +34,26 @@
             android:name=".SetPreferenceActivity"
             android:label="@string/title_activity_main" >
         </activity>
-        <activity 
-            android:name="ActivityButtons"
+        <activity
+            android:name=".ActivityButtons"
             android:label="@string/title_activity_buttons" >
         </activity>
-        <activity 
-            android:name="ActivityMCU"
+        <activity
+            android:name=".ActivityMCU"
             android:label="@string/title_activity_mcu" >
         </activity>
-        <activity 
-            android:name="ActivityTouch"
+        <activity
+            android:name=".ActivityTouch"
             android:label="@string/title_activity_touch" >
         </activity>
-        <activity 
-            android:name="ActivityAbout"
+        <activity
+            android:name=".ActivityAbout"
             android:label="@string/title_activity_about" >
-        </activity>     
+        </activity>
+        <activity
+            android:name=".ActivityServo"
+            android:label="@string/title_activity_servo" >
+        </activity>
     </application>
 
 </manifest>
