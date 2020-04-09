@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/BL_4WD.v2.iml" filepath="$PROJECT_DIR$/BL_4WD.v2.iml" group="BL_4WD.v2" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="BL_4WD.v2/app" />
+    </modules>
+  </component>
+</project>
