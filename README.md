@@ -16,7 +16,6 @@ Content:
 - weather.txt - Howto for using South Tyrol weather data
 - progs - some other programs (Raspberry Pi Node-RED deployment ecc...)
 - robot - the Pirate - 4WD based Arduino car robot project
-- beeraculus - IoT project for counting beer bottles
 
 Other contents on the wiki.
 
