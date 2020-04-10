@@ -9,7 +9,6 @@
 #define D2 4          // direction of motor rotation right
 #define M2 5          // PWM left motor
 #define HORN 13       // additional channel 1
-//#define autoOFF 2500  // milliseconds after which the robot stops when the connection
 
 #define MYSERIAL_TX 6 // software serial TX to bluetooth
 #define MYSERIAL_RX 7 // software serial RX from bluetooth
@@ -26,6 +25,8 @@
 #define cmdr 'r'      // UART-command for EEPROM operation (read)
 #define cmdw 'w'      // UART-command for EEPROM operation (write)
 #define cmdS 'S'      // UART-command for servo motor
+#define cmdE 'e'      // UART-command for command execution
+#define cmdT 't'      // UART-command for EEPROM command execution
 
 char incomingByte;    // incoming data
 
@@ -44,7 +45,7 @@ byte S_index = 0;     // index of array S
 
 char command;         // command
 
-unsigned long lastTimeCommand, autoOFF;
+unsigned long lastTimeCommand, autoOFF; // [ms]
 int oldServoAngle = MIN_SERVO; // old servo angle [deg]
 
 SoftwareSerial mySerial(MYSERIAL_RX, MYSERIAL_TX); // RX, TX for bluetooth
@@ -119,34 +120,36 @@ void loop() {
       memset(S_Data,0,sizeof(S_Data));
       S_index = 0;
     }
-    else if(incomingByte == '\r') command = 'e';   // end of line
-    else if(incomingByte == '\t') command = 't';   // end of line for EEPROM op
+    else if(incomingByte == '\r') command = cmdE;   // end of line
+    else if(incomingByte == '\t') command = cmdT;   // end of line for EEPROM op
 
-    if(command == cmdL && incomingByte != cmdL){
-      L_Data[L_index] = incomingByte;              // store each byte in the array
+   if(command == cmdL && (incomingByte >= '0' && incomingByte <= '9' || incomingByte == '-')){
+      L_Data[L_index] = incomingByte;              // values [-][0..9] => [-][0..255]
       if (L_index < ARRAY_SIZE(L_Data)-2) L_index++; // increment array index but the last char needs to remain 0x00
     }
-    else if(command == cmdR && incomingByte != cmdR){
-      R_Data[R_index] = incomingByte;
+    else if(command == cmdR && (incomingByte >= '0' && incomingByte <= '9' || incomingByte == '-')){
+      R_Data[R_index] = incomingByte;              // values [-][0..9] => [-][0..255]
       if (R_index < ARRAY_SIZE(R_Data)-2) R_index++;
     }
-    else if(command == cmdH && incomingByte != cmdH){
-      H_Data[H_index] = incomingByte;
+    else if(command == cmdH && incomingByte >= '0' && incomingByte <= '1'){
+      H_Data[H_index] = incomingByte;              // values [0,1]
       if (H_index < ARRAY_SIZE(H_Data)-2) H_index++;
     }   
-    else if(command == cmdF && incomingByte != cmdF){
-      F_Data[F_index] = incomingByte;
+    else if(command == cmdF){
+      F_Data[F_index] = incomingByte;              // binary
       if (F_index < ARRAY_SIZE(F_Data)-1) F_index++; // this is not null-terminated!
     }   
-    else if (command == cmdS && incomingByte != cmdS) {
-      S_Data[S_index] = incomingByte;
+    else if (command == cmdS && incomingByte >= '0' && incomingByte <= '9') {
+      S_Data[S_index] = incomingByte;              // values [0..9] => [0..255]
       if (S_index < ARRAY_SIZE(S_Data)-2) S_index++;
     }
-    else if(command == 'e'){                       // if we take the line end
+    else if(command == cmdE){                       // if we take the line end execute and reset
       Control4WD(atoi(L_Data),atoi(R_Data),atoi(H_Data),atoi(S_Data));
+      command = '\0';
     }
-    else if(command == 't'){                       // if we take the EEPROM line end
+    else if(command == cmdT){                       // if we take the EEPROM line end execute and reset
       Flash_Op(F_Data[0],F_Data[1],F_Data[2],F_Data[3],F_Data[4]);
+      command = '\0';
     }
     lastTimeCommand = millis();                    // read the time elapsed since application start
   }
@@ -210,4 +213,3 @@ void Flash_Op(char FCMD, uint8_t z1, uint8_t z2, uint8_t z3, uint8_t z4){
     mySerial.print("FWOK\r\n");         // send a message that the data is successfully written to EEPROM
   }
 }
-
