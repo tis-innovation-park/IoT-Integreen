@@ -57,24 +57,25 @@ void setup() {
   EEPROM.write(1,255);
   EEPROM.write(2,255);
   EEPROM.write(3,255);*/
-  timer_init();             // initialization software timer
+  Timer_Init();             // initialization software timer
 }
 
-void timer_init() {
-  uint8_t sw_autoOFF = EEPROM.read(0);   // read EEPROM "is activated or not stopping the car when losing connection"
+void Timer_Init() {
+  char sw_autoOFF = EEPROM.read(0);      // read EEPROM "is activated or not stopping the car when losing connection"
   if(sw_autoOFF == '1'){                 // if activated
-    char var_Data[4] = { 0, 0, 0, 0 };
-    var_Data[0] = EEPROM.read(1);
-    var_Data[1] = EEPROM.read(2);
-    var_Data[2] = EEPROM.read(3);
-    var_Data[3] = 0x00;
-    autoOFF = atoi(var_Data)*100;        // variable autoOFF ms
+    char var_Data[] = {
+      (char)EEPROM.read(1),
+      (char)EEPROM.read(2),
+      (char)EEPROM.read(3),
+      '\0'
+    };
+    autoOFF = atoi(var_Data)*100UL;      // variable autoOFF [ms], UL since > 2^15-1 (32767)
   }
-  else if(sw_autoOFF == '0'){        
-    autoOFF = 999999;
+  else if(sw_autoOFF == '0'){
+    autoOFF = 999999UL;                  // UL since > 2^15-1 (32767)
   }
   else{
-    autoOFF = 2500;                      // if the EEPROM is blank, dafault value is 2.5 sec
+    autoOFF = 2500UL;                    // if the EEPROM is blank, default value is 2.5 sec
   }
 }
  
@@ -123,8 +124,9 @@ void loop() {
       H_Data[H_index] = incomingByte;              // values [0,1]
       if (H_index < ARRAY_SIZE(H_Data)-2) H_index++;
     }   
-    else if(command == cmdF){
-      F_Data[F_index] = incomingByte;              // binary
+    else if(command == cmdF && (incomingByte >= '0'
+         && incomingByte <= '9' || incomingByte == 0xFF || incomingByte == cmdr || incomingByte == cmdw)){
+      F_Data[F_index] = incomingByte;              // values [0..9]|0xFF|r|w => r|(w(0|1)[0..9][0..9][0..9])|0xFF)
       if (F_index < ARRAY_SIZE(F_Data)-1) F_index++; // this is not null-terminated!
     }
     else if(command == cmdE){                       // if we take the line end execute and reset
@@ -177,21 +179,21 @@ void Control4WD(int mLeft, int mRight, byte Horn){
   digitalWrite(HORN, Horn);           // additional channel
 }
 
-void Flash_Op(char FCMD, uint8_t z1, uint8_t z2, uint8_t z3, uint8_t z4){
-  if(FCMD == cmdr){           // if EEPROM data read command
+void Flash_Op(char FCMD, char z1, char z2, char z3, char z4){
+  if(FCMD == cmdr){                 // if EEPROM data read command
     mySerial.print("FData:");       // send EEPROM data
-    mySerial.write(EEPROM.read(0));     // read value from the memory with 0 address and print it to UART
+    mySerial.write(EEPROM.read(0)); // read value from the memory with 0 address and print it to UART
     mySerial.write(EEPROM.read(1));
     mySerial.write(EEPROM.read(2));
     mySerial.write(EEPROM.read(3));
     mySerial.print("\r\n");         // mark the end of the transmission of data EEPROM
   }
-  else if(FCMD == cmdw){          // if EEPROM data write command
-    EEPROM.write(0,z1);               // z1 record to a memory with 0 address
+  else if(FCMD == cmdw){            // if EEPROM data write command
+    EEPROM.write(0,z1);             // z1 record to a memory with 0 address
     EEPROM.write(1,z2);
     EEPROM.write(2,z3);
     EEPROM.write(3,z4);
-    timer_init();             // reinitialize the timer
-    mySerial.print("FWOK\r\n");         // send a message that the data is successfully written to EEPROM
+    Timer_Init();                   // reinitialize the timer
+    mySerial.print("FWOK\r\n");     // send a message that the data is successfully written to EEPROM
   }
 }
