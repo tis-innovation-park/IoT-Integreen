@@ -54,5 +54,6 @@
     <string name="down">down</string>
     <string name="btn_servo">Servo motor control</string>
     <string name="lift">lift</string>
+    <string name="ble_not_supported">BLE is not supported</string>
 
 </resources>

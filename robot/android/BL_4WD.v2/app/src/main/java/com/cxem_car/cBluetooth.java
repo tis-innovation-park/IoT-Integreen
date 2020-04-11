@@ -1,195 +1,158 @@
 package com.cxem_car;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.UUID;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 
-
-public class cBluetooth{
-	
+public class cBluetooth
+{
 	public final static String TAG = "BL_4WD";
-	
-	private static BluetoothAdapter btAdapter;
-    private BluetoothSocket btSocket;
-    private OutputStream outStream;
-	private ConnectedThread mConnectedThread;
 
-    // SPP UUID service 
-    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    
-    private final Handler mHandler;
-    public final static int BL_NOT_AVAILABLE = 1;        // ������ ��� Handler
-    public final static int BL_INCORRECT_ADDRESS = 2;
-    public final static int BL_REQUEST_ENABLE = 3;
-    public final static int BL_SOCKET_FAILED = 4;
-    public final static int RECEIVE_MESSAGE = 5;
-      
-    cBluetooth(Context context, Handler handler){
-    	btAdapter = BluetoothAdapter.getDefaultAdapter();
-    	mHandler = handler;
-        if (btAdapter == null) {
-        	mHandler.sendEmptyMessage(BL_NOT_AVAILABLE);
-            return;
-        }
-    }
-   
-    public void checkBTState() {
-    	if(btAdapter == null) { 
-     		mHandler.sendEmptyMessage(BL_NOT_AVAILABLE);
-    	} else {
-    		if (btAdapter.isEnabled()) {
-    			Log.d(TAG, "Bluetooth ON");
-    		} else {
-    			mHandler.sendEmptyMessage(BL_REQUEST_ENABLE);
-    		}
-    	}
+	public final static UUID UUID_SERVICE = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
+	public final static UUID UUID_CHARACTERISTIC = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+
+	private BluetoothLeService mBtLeService;
+	private final Context mContext;
+	private final Handler mHandler;
+
+	public final static int BL_NOT_AVAILABLE = 1;
+	public final static int BL_INCORRECT_ADDRESS = 2;
+	public final static int BL_REQUEST_ENABLE = 3;
+	public final static int BL_SOCKET_FAILED = 4;
+	public final static int BL_INITIALIZED = 5;
+	public final static int RECEIVE_MESSAGE = 10;
+
+	// Code to manage Service lifecycle.
+	private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName componentName, IBinder service) {
+			mBtLeService = ((BluetoothLeService.LocalBinder) service).getService();
+			if (!mBtLeService.initialize())
+				mHandler.sendEmptyMessage(BL_NOT_AVAILABLE);
+			else
+				mHandler.sendEmptyMessage(BL_INITIALIZED);
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName componentName) {
+			mBtLeService = null;
+		}
+	};
+
+	// Handles various events fired by the Service.
+	// ACTION_GATT_CONNECTED: connected to a GATT server.
+	// ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
+	// ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
+	// ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
+	//                        or notification operations.
+	private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+		StringBuilder recvData = new StringBuilder();
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			final String action = intent.getAction();
+			if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+				Log.i(TAG, "Connected");
+			} else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+				close();
+			} else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+				Log.i(TAG, "Services Discovered");
+				// Enable Notifications
+				BluetoothGattCharacteristic characteristic = mBtLeService.getService(UUID_SERVICE).getCharacteristic(UUID_CHARACTERISTIC);
+				mBtLeService.setCharacteristicNotification(characteristic, true);
+			} else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+				// Read from the InputStream. Since buffering differs on
+				// Android and Arduino side we need to keep up our reading
+				// until we receive the end-of-line markers (\r\n).
+				recvData.append(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+				if (recvData.length() > 0 && recvData.charAt(recvData.length()-1) == '\n') {
+					Log.i(TAG, "Receive data: " + recvData);
+					mHandler.obtainMessage(RECEIVE_MESSAGE, -1, -1, recvData).sendToTarget();
+					recvData = new StringBuilder(); // re-start from scratch
+				}
+			}
+		}
+	};
+
+	public cBluetooth(Context context, Handler handler) {
+		mContext = context;
+		mHandler = handler;
+
+		Intent gattServiceIntent = new Intent(context, BluetoothLeService.class);
+		mContext.bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
 	}
-    
-    public void BT_Connect(String address) {   	
-    	Log.d(TAG, "...On Resume...");   	
 
-    	if(!BluetoothAdapter.checkBluetoothAddress(address)){
-    		mHandler.sendEmptyMessage(BL_INCORRECT_ADDRESS);
-    		return;
-    	}
-    	else{
-	    	BluetoothDevice device = btAdapter.getRemoteDevice(address);
-	        try {
-	        	btSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
-	        } catch (IOException e) {
-	        	Log.d(TAG, "In onResume() and socket create failed: " + e.getMessage());
-	        	mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
-	    		return;
-	        }
-	        
-	        btAdapter.cancelDiscovery();
-	        Log.d(TAG, "...Connecting...");
-	        try {
-	          btSocket.connect();
-	          Log.d(TAG, "...Connection ok...");
-	        } catch (IOException e) {
-	          try {
-	            btSocket.close();
-	          } catch (IOException e2) {
-	        	  Log.d(TAG, "In onResume() and unable to close socket during connection failure" + e2.getMessage());
-	        	  mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
-	        	  return;
-	          }
-	        }
-	         
-	        // Create a data stream so we can talk to server.
-	        Log.d(TAG, "...Create Socket...");
-	     
-	        try {
-	        	outStream = btSocket.getOutputStream();
-	        } catch (IOException e) {
-	        	Log.d(TAG, "In onResume() and output stream creation failed:" + e.getMessage());
-	        	mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
-	        	return;
-	        }
-			   
-		    mConnectedThread = new ConnectedThread();
-		    mConnectedThread.start();
-    	}
+	private static IntentFilter makeGattUpdateIntentFilter() {
+		final IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
+		intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
+		intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+		intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+		return intentFilter;
 	}
-    
-    public void BT_onPause() {
-    	Log.d(TAG, "...On Pause...");
-    	if (outStream != null) {
-    		try {
-    	        outStream.flush();
-    	        outStream = null;
-    	    } catch (IOException e) {
-	        	Log.d(TAG, "In onPause() and failed to flush output stream: " + e.getMessage());
-	        	mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
-	        	return;
-    	    }
-    	}
-    	
-    	// makes sure that the reader thread will be closed
-    	try {
-    		mConnectedThread.inStream.close();
-    	} catch (IOException e) {
-    	}
 
-    	if (btSocket != null) {
-	    	try {
-	    		btSocket.close();
-	    		btSocket = null;
-	    	} catch (IOException e2) {
-	        	Log.d(TAG, "In onPause() and failed to close socket." + e2.getMessage());
-	        	mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
-	        	return;
-	    	}
-    	}
-    }
-        
-    public void sendData(String message) {
-        byte[] msgBuffer = message.getBytes();
-     
-        Log.i(TAG, "Send data: " + message);
-        
-        if (outStream == null) return;
-        try {
-        	outStream.write(msgBuffer);
-        } catch (IOException e) {
-        	Log.d(TAG, "In sendData() and an exception occurred during write: " + e.getMessage());
-        	mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
-        	return;      
-        }
-        // Log.d(TAG, "Error Send data: outStream is Null");
+	public void connect(String address) {
+		Log.d(TAG, "...On Resume...");
+
+		if(!BluetoothAdapter.checkBluetoothAddress(address)){
+			mHandler.sendEmptyMessage(BL_INCORRECT_ADDRESS);
+			return;
+		}
+
+		if (mBtLeService == null)
+			return;
+
+		mContext.registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+
+		if (!mBtLeService.connect(address)) {
+			Log.d(TAG, "In onResume() and socket create failed");
+			mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
+			return;
+		}
 	}
-    
-	private class ConnectedThread extends Thread {
-	  	private final InputStream inStream;
-	 
-	    public ConnectedThread() {		 
-	        // Get the input stream, using temp object because member streams
-	    	// is final
-	        InputStream tmpIn = null;
-	        try {
-	            tmpIn = btSocket.getInputStream();
-	        } catch (IOException e) {
-	        	Log.d(TAG, "In ConnectedThread() and an exception occurred during read: " + e.getMessage());
-	        	mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
-	        }
-	 
-	        inStream = tmpIn;
-	    }
-	 
-	    public void run() {
-	        byte[] buffer = new byte[256];  // buffer store for the stream
-	        int bytes; // bytes returned from read()
-	        boolean eol; // end-of-line marker
 
-	        // Keep listening to the InputStream until an exception occurs
-	        while (true) {
-	        	try {	        		
-	                // Read from the InputStream. Since buffering differs on
-	        		// Android and Arduino side we need to keep up our reading
-	        		// until we receive the end-of-line markers (\r\n).
-	        		bytes = 0;
-	        		eol = false;
-	        		while (!eol && bytes < buffer.length) {
-	        			buffer[bytes] = (byte) inStream.read();
-	        			if (buffer[bytes] == '\n') eol = true;
-	        			++bytes;
-	        		}
-	                
-                	Log.i(TAG, "Receive data: " + new String(buffer, 0, bytes));
-                	mHandler.obtainMessage(RECEIVE_MESSAGE, bytes, -1, buffer).sendToTarget();
-	            } catch (IOException e) {
-	                break;
-	            }
-	        }
-	    }
+	public void close() {
+		Log.d(TAG, "...On Destroy...");
+
+		if (mBtLeService == null)
+			return;
+
+		mContext.unregisterReceiver(mGattUpdateReceiver);
+
+		mContext.unbindService(mServiceConnection);
+		mBtLeService = null;
+	}
+
+	public void sendData(String message) {
+		BluetoothGattService s = mBtLeService.getService(UUID_SERVICE);
+		if (s == null) {
+			Log.d(TAG, "In sendData() and an exception occurred during read");
+			mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
+			return;
+		}
+
+		BluetoothGattCharacteristic c = s.getCharacteristic(UUID_CHARACTERISTIC);
+		if (c == null) {
+			Log.d(TAG, "In sendData() and an exception occurred during read");
+			mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
+			return;
+		}
+
+		Log.i(TAG, "Send data: " + message);
+
+		c.setValue(message);
+		mBtLeService.writeCharacteristic(c);
 	}
 }

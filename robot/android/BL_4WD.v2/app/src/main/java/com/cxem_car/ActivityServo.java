@@ -59,7 +59,6 @@ public class ActivityServo extends Activity {
 		loadPref();
 		
 	    bl = new cBluetooth(this, new Handler(myHandlerCallback));
-	    bl.checkBTState();
 
 	    btn_up = (Button) findViewById(R.id.button_up);
 	    btn_down = (Button) findViewById(R.id.button_down);
@@ -120,11 +119,11 @@ public class ActivityServo extends Activity {
     	show_Debug = mySharedPreferences.getBoolean("pref_Debug", false);
     	commandServo = mySharedPreferences.getString("pref_commandServo", commandServo);
 	}
-    
+
     @Override
     protected void onResume() {
     	super.onResume();
-    	bl.BT_Connect(address);
+        bl.connect(address);
     	// restore servo value
     	SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     	motorServo = mySharedPreferences.getInt("motorServo", 0);
@@ -134,13 +133,18 @@ public class ActivityServo extends Activity {
     @Override
     protected void onPause() {
     	super.onPause();
-    	bl.BT_onPause();
     	// save servo value
     	SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     	SharedPreferences.Editor editor = mySharedPreferences.edit();
     	editor.putInt("motorServo", motorServo);
     	editor.commit();
     }
+
+    @Override
+	protected void onDestroy() {
+		super.onDestroy();
+		bl.close();
+	}
     
 	private final Handler.Callback myHandlerCallback =  new Handler.Callback() {
     	private WeakReference<ActivityServo> obj = new WeakReference<ActivityServo>(ActivityServo.this);
@@ -165,6 +169,9 @@ public class ActivityServo extends Activity {
             case cBluetooth.BL_SOCKET_FAILED:
             	Toast.makeText(obj.get().getBaseContext(), "Socket failed", Toast.LENGTH_SHORT).show();
                 obj.get().finish();
+                break;
+            case cBluetooth.BL_INITIALIZED:
+                bl.connect(address);
                 break;
             }
         	return true;

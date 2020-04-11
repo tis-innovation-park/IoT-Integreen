@@ -66,7 +66,6 @@ public class ActivityButtons extends Activity {
 		loadPref();
 		
 	    bl = new cBluetooth(this, new Handler(myHandlerCallback));
-	    bl.checkBTState();
 		
 		btn_forward = (Button) findViewById(R.id.forward);
 		btn_backward = (Button) findViewById(R.id.backward);
@@ -181,6 +180,9 @@ public class ActivityButtons extends Activity {
             	Toast.makeText(obj.get().getBaseContext(), "Socket failed", Toast.LENGTH_SHORT).show();
                 obj.get().finish();
                 break;
+            case cBluetooth.BL_INITIALIZED:
+                bl.connect(address);
+                break;
             }
         	return true;
         };
@@ -196,16 +198,16 @@ public class ActivityButtons extends Activity {
     	commandRight = mySharedPreferences.getString("pref_commandRight", commandRight);
     	commandHorn = mySharedPreferences.getString("pref_commandHorn", commandHorn);
 	}
-    
+
     @Override
     protected void onResume() {
-    	super.onResume();
-    	bl.BT_Connect(address);
+        super.onResume();
+        bl.connect(address);
     }
 
     @Override
-    protected void onPause() {
-    	super.onPause();
-    	bl.BT_onPause();
+    protected void onDestroy() {
+        super.onDestroy();
+        bl.close();
     }
 }

@@ -57,7 +57,6 @@ public class ActivityAccelerometer extends Activity implements SensorEventListen
         mAccel = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);          
         
         bl = new cBluetooth(this, new Handler(myHandlerCallback));
-        bl.checkBTState();
         
         onOffButton = (ToggleButton) findViewById(R.id.OnOffButton);
         onOffButton.setOnClickListener(new OnClickListener() {
@@ -94,6 +93,9 @@ public class ActivityAccelerometer extends Activity implements SensorEventListen
             case cBluetooth.BL_SOCKET_FAILED:
             	Toast.makeText(obj.get().getBaseContext(), "Socket failed", Toast.LENGTH_SHORT).show();
                 obj.get().finish();
+                break;
+            case cBluetooth.BL_INITIALIZED:
+                bl.connect(address);
                 break;
             }
         	return true;
@@ -190,23 +192,27 @@ public class ActivityAccelerometer extends Activity implements SensorEventListen
     	commandRight = mySharedPreferences.getString("pref_commandRight", commandRight);
     	commandHorn = mySharedPreferences.getString("pref_commandHorn", commandHorn);
 	}
-    
+
     @Override
     protected void onResume() {
     	super.onResume();
-    	bl.BT_Connect(address);
-        
+        bl.connect(address);
+
     	mSensorManager.registerListener(this, mAccel, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
     protected void onPause() {
-    	super.onPause();
-    	bl.BT_onPause();
-    	
-    	mSensorManager.unregisterListener(this);
+        super.onPause();
+        mSensorManager.unregisterListener(this);
     }
-       
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        bl.close();
+    }
+
     public void onAccuracyChanged(Sensor arg0, int arg1) {
         // TODO Auto-generated method stub
     }

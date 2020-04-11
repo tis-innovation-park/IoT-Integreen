@@ -48,7 +48,6 @@ public class ActivityTouch extends Activity {
         loadPref();
         
         bl = new cBluetooth(this, new Handler(myHandlerCallback));
-        bl.checkBTState();
         
         final ToggleButton onOffButton = new ToggleButton(this);
         addContentView(onOffButton, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -86,6 +85,9 @@ public class ActivityTouch extends Activity {
             case cBluetooth.BL_SOCKET_FAILED:
             	Toast.makeText(obj.get().getBaseContext(), "Socket failed", Toast.LENGTH_SHORT).show();
                 obj.get().finish();
+                break;
+            case cBluetooth.BL_INITIALIZED:
+                bl.connect(address);
                 break;
             }
         	return true;
@@ -245,16 +247,16 @@ public class ActivityTouch extends Activity {
 		
 	@Override
     protected void onResume() {
-    	super.onResume();
-    	bl.BT_Connect(address);
+        super.onResume();
+        bl.connect(address);
     }
 
     @Override
-    protected void onPause() {
-    	super.onPause();
-    	bl.BT_onPause();
+    protected void onDestroy() {
+        super.onDestroy();
+        bl.close();
     }
-    
+
     private void loadPref(){
     	SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);  
     	address = mySharedPreferences.getString("pref_MAC_address", address);			// ������ ��� ��������� ��������� ��������

@@ -39,10 +39,9 @@ public class ActivityMCU  extends Activity{
         edit_AutoOFF = (EditText) findViewById(R.id.AutoOFF);
         
 		loadPref();
-		
+
 	    bl = new cBluetooth(this, new Handler(myHandlerCallback));
-	    bl.checkBTState();
-	    
+
 	    cb_AutoOFF.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             	synchronized (ActivityMCU.this) {
@@ -130,12 +129,12 @@ public class ActivityMCU  extends Activity{
             	Toast.makeText(obj.get().getBaseContext(), "Socket failed", Toast.LENGTH_SHORT).show();
                 obj.get().finish();
                 break;
+            case cBluetooth.BL_INITIALIZED:
+                bl.connect(address);
+                break;
             case cBluetooth.RECEIVE_MESSAGE:										// if message has been received
-            	byte[] readBuf = (byte[]) msg.obj;
-            	String strIncom = new String(readBuf, 0, msg.arg1);
-            	StringBuilder sb = new StringBuilder();
-            	sb.append(strIncom);												// append string
-            	
+                StringBuilder sb = (StringBuilder) msg.obj;
+
             	int FDataLineIndex = sb.indexOf("FData:");					// ������ � Flash ������� (������)
             	int FWOKLineIndex = sb.indexOf("FWOK");						// ������ � ���������� �� �������� ������ � Flash
             	int endOfLineIndex = sb.indexOf("\r\n");
@@ -173,16 +172,16 @@ public class ActivityMCU  extends Activity{
     	SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);  
     	address = mySharedPreferences.getString("pref_MAC_address", address);			// ������ ��� ��������� ��������� ��������
 	}
-    
+
     @Override
     protected void onResume() {
-    	super.onResume();
-    	bl.BT_Connect(address);
+        super.onResume();
+        bl.connect(address);
     }
 
     @Override
-    protected void onPause() {
-    	super.onPause();
-    	bl.BT_onPause();
-    }    
+    protected void onDestroy() {
+        super.onDestroy();
+        bl.close();
+    }
 }

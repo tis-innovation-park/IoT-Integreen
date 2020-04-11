@@ -58,6 +58,7 @@
             android:name=".ActivityServo"
             android:label="@string/title_activity_servo" >
         </activity>
+        <service android:name=".BluetoothLeService" android:enabled="true"/>
     </application>
 
 </manifest>
