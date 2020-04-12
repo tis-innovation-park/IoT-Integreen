@@ -52,7 +52,7 @@ public class ActivityServo extends Activity {
 		
 		loadPref();
 		
-	    bl = new cBluetooth(this, new cBluetooth.DefaultHandlerCallback<>(this));
+	    bl = new cBluetooth(this, address, new cBluetooth.DefaultHandlerCallback<>(this));
 
 	    btn_up = (Button) findViewById(R.id.button_up);
 	    btn_down = (Button) findViewById(R.id.button_down);
@@ -117,7 +117,7 @@ public class ActivityServo extends Activity {
     @Override
     protected void onResume() {
     	super.onResume();
-        bl.connect(address);
+        bl.connect();
     	// restore servo value
     	SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     	motorServo = mySharedPreferences.getInt("motorServo", 0);

@@ -48,7 +48,7 @@ public class ActivityAccelerometer extends Activity implements SensorEventListen
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccel = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);          
         
-        bl = new cBluetooth(this, new cBluetooth.DefaultHandlerCallback<>(this));
+        bl = new cBluetooth(this, address, new cBluetooth.DefaultHandlerCallback<>(this));
         
         onOffButton = (ToggleButton) findViewById(R.id.OnOffButton);
         onOffButton.setOnClickListener(new OnClickListener() {
@@ -156,7 +156,7 @@ public class ActivityAccelerometer extends Activity implements SensorEventListen
     @Override
     protected void onResume() {
     	super.onResume();
-        bl.connect(address);
+        bl.connect();
 
     	mSensorManager.registerListener(this, mAccel, SensorManager.SENSOR_DELAY_NORMAL);
     }

@@ -59,7 +59,7 @@ public class ActivityButtons extends Activity {
 				
 		loadPref();
 		
-	    bl = new cBluetooth(this, new cBluetooth.DefaultHandlerCallback<>(this));
+	    bl = new cBluetooth(this, address, new cBluetooth.DefaultHandlerCallback<>(this));
 		
 		btn_forward = (Button) findViewById(R.id.forward);
 		btn_backward = (Button) findViewById(R.id.backward);
@@ -165,7 +165,7 @@ public class ActivityButtons extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        bl.connect(address);
+        bl.connect();
     }
 
     @Override

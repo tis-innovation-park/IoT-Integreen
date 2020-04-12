@@ -37,7 +37,7 @@ public class ActivityMCU  extends Activity{
         
 		loadPref();
 
-	    bl = new cBluetooth(this, myHandlerCallback);
+	    bl = new cBluetooth(this, address, myHandlerCallback);
 
 	    cb_AutoOFF.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -151,7 +151,7 @@ public class ActivityMCU  extends Activity{
     @Override
     protected void onResume() {
         super.onResume();
-        bl.connect(address);
+        bl.connect();
     }
 
     @Override

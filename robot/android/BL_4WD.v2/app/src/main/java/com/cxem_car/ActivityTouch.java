@@ -40,7 +40,7 @@ public class ActivityTouch extends Activity {
                 
         loadPref();
         
-        bl = new cBluetooth(this, new cBluetooth.DefaultHandlerCallback<>(this));
+        bl = new cBluetooth(this, address, new cBluetooth.DefaultHandlerCallback<>(this));
         
         final ToggleButton onOffButton = new ToggleButton(this);
         addContentView(onOffButton, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -209,7 +209,7 @@ public class ActivityTouch extends Activity {
 	@Override
     protected void onResume() {
         super.onResume();
-        bl.connect(address);
+        bl.connect();
     }
 
     @Override

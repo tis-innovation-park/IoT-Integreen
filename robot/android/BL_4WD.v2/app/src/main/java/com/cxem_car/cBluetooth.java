@@ -25,15 +25,15 @@ public class cBluetooth
 	public final static UUID UUID_SERVICE = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
 	public final static UUID UUID_CHARACTERISTIC = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
 
-	private BluetoothLeService mBtLeService;
 	private final Context mContext;
+	private final String mAddress;
 	private final Handler mHandler;
+	private BluetoothLeService mBtLeService;
 
 	public final static int BL_NOT_AVAILABLE = 1;
 	public final static int BL_INCORRECT_ADDRESS = 2;
 	public final static int BL_REQUEST_ENABLE = 3;
 	public final static int BL_SOCKET_FAILED = 4;
-	public final static int BL_INITIALIZED = 5;
 	public final static int RECEIVE_MESSAGE = 10;
 
 	// Code to manage Service lifecycle.
@@ -42,10 +42,12 @@ public class cBluetooth
 		@Override
 		public void onServiceConnected(ComponentName componentName, IBinder service) {
 			mBtLeService = ((BluetoothLeService.LocalBinder) service).getService();
-			if (!mBtLeService.initialize())
+			if (!mBtLeService.initialize()) {
 				mHandler.sendEmptyMessage(BL_NOT_AVAILABLE);
-			else
-				mHandler.sendEmptyMessage(BL_INITIALIZED);
+				return;
+			}
+			// pass on to connect
+			connect();
 		}
 
 		@Override
@@ -117,18 +119,20 @@ public class cBluetooth
 					Toast.makeText(obj.get().getBaseContext(), "Socket failed", Toast.LENGTH_SHORT).show();
 					obj.get().finish();
 					break;
-				case cBluetooth.BL_INITIALIZED:
-					// TODO
-					//bl.connect(address);
-					break;
 			}
 			return true;
 		};
 	};
 
-	public cBluetooth(Context context, Handler.Callback handlerCallback) {
+	public cBluetooth(Context context, String address, Handler.Callback handlerCallback) {
 		mContext = context;
+		mAddress = address;
 		mHandler = new Handler(handlerCallback);
+
+		if(!BluetoothAdapter.checkBluetoothAddress(mAddress)){
+			mHandler.sendEmptyMessage(BL_INCORRECT_ADDRESS);
+			return;
+		}
 
 		Intent gattServiceIntent = new Intent(context, BluetoothLeService.class);
 		mContext.bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
@@ -143,20 +147,15 @@ public class cBluetooth
 		return intentFilter;
 	}
 
-	public void connect(String address) {
+	public void connect() {
 		Log.d(TAG, "...On Resume...");
-
-		if(!BluetoothAdapter.checkBluetoothAddress(address)){
-			mHandler.sendEmptyMessage(BL_INCORRECT_ADDRESS);
-			return;
-		}
 
 		if (mBtLeService == null)
 			return;
 
 		mContext.registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
 
-		if (!mBtLeService.connect(address)) {
+		if (!mBtLeService.connect(mAddress)) {
 			Log.d(TAG, "In onResume() and socket create failed");
 			mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
 			return;
