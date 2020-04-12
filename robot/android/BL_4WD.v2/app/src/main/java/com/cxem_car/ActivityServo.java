@@ -1,23 +1,17 @@
 package com.cxem_car;
 
-import java.lang.ref.WeakReference;
 import java.util.Locale;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ActivityServo extends Activity {
 	private cBluetooth bl = null;
@@ -58,7 +52,7 @@ public class ActivityServo extends Activity {
 		
 		loadPref();
 		
-	    bl = new cBluetooth(this, new Handler(myHandlerCallback));
+	    bl = new cBluetooth(this, new cBluetooth.DefaultHandlerCallback<>(this));
 
 	    btn_up = (Button) findViewById(R.id.button_up);
 	    btn_down = (Button) findViewById(R.id.button_down);
@@ -145,36 +139,4 @@ public class ActivityServo extends Activity {
 		super.onDestroy();
 		bl.close();
 	}
-    
-	private final Handler.Callback myHandlerCallback =  new Handler.Callback() {
-    	private WeakReference<ActivityServo> obj = new WeakReference<ActivityServo>(ActivityServo.this);
-    	
-        public boolean handleMessage(android.os.Message msg) {
-        	switch (msg.what) {
-            case cBluetooth.BL_NOT_AVAILABLE:
-               	Log.d(cBluetooth.TAG, "Bluetooth is not available. Exit");
-            	Toast.makeText(obj.get().getBaseContext(), "Bluetooth is not available", Toast.LENGTH_SHORT).show();
-                obj.get().finish();
-                break;
-            case cBluetooth.BL_INCORRECT_ADDRESS:
-            	Log.d(cBluetooth.TAG, "Incorrect MAC address");
-            	Toast.makeText(obj.get().getBaseContext(), "Incorrect Bluetooth address", Toast.LENGTH_SHORT).show();
-                break;
-            case cBluetooth.BL_REQUEST_ENABLE:   
-            	Log.d(cBluetooth.TAG, "Request Bluetooth Enable");
-            	BluetoothAdapter.getDefaultAdapter();
-            	Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                obj.get().startActivityForResult(enableBtIntent, 1);
-                break;
-            case cBluetooth.BL_SOCKET_FAILED:
-            	Toast.makeText(obj.get().getBaseContext(), "Socket failed", Toast.LENGTH_SHORT).show();
-                obj.get().finish();
-                break;
-            case cBluetooth.BL_INITIALIZED:
-                bl.connect(address);
-                break;
-            }
-        	return true;
-        };
-    };
 }

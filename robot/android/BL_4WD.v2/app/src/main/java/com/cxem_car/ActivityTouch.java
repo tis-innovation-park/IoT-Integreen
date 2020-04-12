@@ -1,25 +1,18 @@
 package com.cxem_car;
 
-import java.lang.ref.WeakReference;
-
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class ActivityTouch extends Activity {
@@ -47,7 +40,7 @@ public class ActivityTouch extends Activity {
                 
         loadPref();
         
-        bl = new cBluetooth(this, new Handler(myHandlerCallback));
+        bl = new cBluetooth(this, new cBluetooth.DefaultHandlerCallback<>(this));
         
         final ToggleButton onOffButton = new ToggleButton(this);
         addContentView(onOffButton, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -61,39 +54,7 @@ public class ActivityTouch extends Activity {
     		}
     	});
 	}
-	
-    private final Handler.Callback myHandlerCallback =  new Handler.Callback() {
-    	private WeakReference<ActivityTouch> obj = new WeakReference<ActivityTouch>(ActivityTouch.this);
-    	
-    	public boolean handleMessage(android.os.Message msg) {
-        	switch (msg.what) {
-            case cBluetooth.BL_NOT_AVAILABLE:
-               	Log.d(cBluetooth.TAG, "Bluetooth is not available. Exit");
-            	Toast.makeText(obj.get().getBaseContext(), "Bluetooth is not available", Toast.LENGTH_SHORT).show();
-                obj.get().finish();
-                break;
-            case cBluetooth.BL_INCORRECT_ADDRESS:
-            	Log.d(cBluetooth.TAG, "Incorrect MAC address");
-            	Toast.makeText(obj.get().getBaseContext(), "Incorrect Bluetooth address", Toast.LENGTH_SHORT).show();
-                break;
-            case cBluetooth.BL_REQUEST_ENABLE:   
-            	Log.d(cBluetooth.TAG, "Request Bluetooth Enable");
-            	BluetoothAdapter.getDefaultAdapter();
-            	Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                obj.get().startActivityForResult(enableBtIntent, 1);
-                break;
-            case cBluetooth.BL_SOCKET_FAILED:
-            	Toast.makeText(obj.get().getBaseContext(), "Socket failed", Toast.LENGTH_SHORT).show();
-                obj.get().finish();
-                break;
-            case cBluetooth.BL_INITIALIZED:
-                bl.connect(address);
-                break;
-            }
-        	return true;
-        };
-    };
-	
+
 	class MyView extends View {
 
 		Paint fingerPaint, borderPaint, textPaint;

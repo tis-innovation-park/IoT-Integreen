@@ -1,11 +1,8 @@
 package com.cxem_car;
 
-import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,7 +37,7 @@ public class ActivityMCU  extends Activity{
         
 		loadPref();
 
-	    bl = new cBluetooth(this, new Handler(myHandlerCallback));
+	    bl = new cBluetooth(this, myHandlerCallback);
 
 	    cb_AutoOFF.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -104,70 +101,48 @@ public class ActivityMCU  extends Activity{
 			}
 	    });
     }
-    
-    private final Handler.Callback myHandlerCallback = new Handler.Callback() {
-    	private WeakReference<ActivityMCU> obj = new WeakReference<ActivityMCU>(ActivityMCU.this);
-    	
-        public boolean handleMessage(android.os.Message msg) {
-        	switch (msg.what) {
-            case cBluetooth.BL_NOT_AVAILABLE:
-               	Log.d(cBluetooth.TAG, "Bluetooth is not available. Exit");
-            	Toast.makeText(obj.get().getBaseContext(), "Bluetooth is not available", Toast.LENGTH_SHORT).show();
-                obj.get().finish();
-                break;
-            case cBluetooth.BL_INCORRECT_ADDRESS:
-            	Log.d(cBluetooth.TAG, "Incorrect MAC address");
-            	Toast.makeText(obj.get().getBaseContext(), "Incorrect Bluetooth address", Toast.LENGTH_SHORT).show();
-                break;
-            case cBluetooth.BL_REQUEST_ENABLE:   
-            	Log.d(cBluetooth.TAG, "Request Bluetooth Enable");
-            	BluetoothAdapter.getDefaultAdapter();
-            	Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                obj.get().startActivityForResult(enableBtIntent, 1);
-                break;
-            case cBluetooth.BL_SOCKET_FAILED:
-            	Toast.makeText(obj.get().getBaseContext(), "Socket failed", Toast.LENGTH_SHORT).show();
-                obj.get().finish();
-                break;
-            case cBluetooth.BL_INITIALIZED:
-                bl.connect(address);
-                break;
-            case cBluetooth.RECEIVE_MESSAGE:										// if message has been received
-                StringBuilder sb = (StringBuilder) msg.obj;
 
-            	int FDataLineIndex = sb.indexOf("FData:");					// ������ � Flash ������� (������)
-            	int FWOKLineIndex = sb.indexOf("FWOK");						// ������ � ���������� �� �������� ������ � Flash
-            	int endOfLineIndex = sb.indexOf("\r\n");
+	private final Handler.Callback myHandlerCallback = new cBluetooth.DefaultHandlerCallback<ActivityMCU>(this) {
+		@Override
+		public boolean handleMessage(android.os.Message msg) {
+			if (msg.what == cBluetooth.RECEIVE_MESSAGE) {
+				StringBuilder sb = (StringBuilder) msg.obj;
 
-            	if (FDataLineIndex >= 0 && endOfLineIndex > 0 && endOfLineIndex > FDataLineIndex) { 					// ���� ����������
-            		String sbprint = sb.substring("FData:".length(), endOfLineIndex);	// ��������
-            		synchronized (obj) {
-	            		if (sbprint.substring(0, 1).equals("1")) { // we have a valid value set [s]
-	            			obj.get().cb_AutoOFF.setChecked(true);
-	            			obj.get().edit_AutoOFF.setEnabled(true);
-	                		Float edit_data_AutoOFF = Float.parseFloat(sbprint.substring(1, 4))/10;  		
-	                		obj.get().edit_AutoOFF.setText(String.valueOf(edit_data_AutoOFF));
-	            		} else { // there is no valid value
-	            			obj.get().cb_AutoOFF.setChecked(false);
-	            			obj.get().edit_AutoOFF.setEnabled(false);
-	            			obj.get().edit_AutoOFF.setText("");
-	            		}
-            		}
-                }
-            	else if (FWOKLineIndex >= 0 && endOfLineIndex > 0 && endOfLineIndex > FWOKLineIndex) {
-            		String flash_success = obj.get().getString(R.string.flash_success);
-            		Toast.makeText(obj.get().getBaseContext(), flash_success, Toast.LENGTH_SHORT).show();
-            	}
-            	else if(endOfLineIndex > 0) {
-            		String error_get_data = obj.get().getString(R.string.error_get_data);
-            		Toast.makeText(obj.get().getBaseContext(), error_get_data, Toast.LENGTH_SHORT).show();
-            	}
-            	break;
-            }
-        	return true;
-        }
-    };
-	
+				int FDataLineIndex = sb.indexOf("FData:");					// ������ � Flash ������� (������)
+				int FWOKLineIndex = sb.indexOf("FWOK");						// ������ � ���������� �� �������� ������ � Flash
+				int endOfLineIndex = sb.indexOf("\r\n");
+
+				if (FDataLineIndex >= 0 && endOfLineIndex > 0 && endOfLineIndex > FDataLineIndex) { 					// ���� ����������
+					String sbprint = sb.substring("FData:".length(), endOfLineIndex);	// ��������
+					synchronized (obj) {
+						if (sbprint.substring(0, 1).equals("1")) { // we have a valid value set [s]
+							obj.get().cb_AutoOFF.setChecked(true);
+							obj.get().edit_AutoOFF.setEnabled(true);
+							Float edit_data_AutoOFF = Float.parseFloat(sbprint.substring(1, 4))/10;
+							obj.get().edit_AutoOFF.setText(String.valueOf(edit_data_AutoOFF));
+						} else { // there is no valid value
+							obj.get().cb_AutoOFF.setChecked(false);
+							obj.get().edit_AutoOFF.setEnabled(false);
+							obj.get().edit_AutoOFF.setText("");
+						}
+					}
+				}
+				else if (FWOKLineIndex >= 0 && endOfLineIndex > 0 && endOfLineIndex > FWOKLineIndex) {
+					String flash_success = obj.get().getString(R.string.flash_success);
+					Toast.makeText(obj.get().getBaseContext(), flash_success, Toast.LENGTH_SHORT).show();
+				}
+				else if(endOfLineIndex > 0) {
+					String error_get_data = obj.get().getString(R.string.error_get_data);
+					Toast.makeText(obj.get().getBaseContext(), error_get_data, Toast.LENGTH_SHORT).show();
+				}
+
+				return true;
+			}
+			// else
+			return super.handleMessage(msg);
+		}
+	};
+
     private void loadPref(){
     	SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);  
     	address = mySharedPreferences.getString("pref_MAC_address", address);			// ������ ��� ��������� ��������� ��������

@@ -1,7 +1,9 @@
 package com.cxem_car;
 
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -14,6 +16,7 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 public class cBluetooth
 {
@@ -86,9 +89,46 @@ public class cBluetooth
 		}
 	};
 
-	public cBluetooth(Context context, Handler handler) {
+	public static class DefaultHandlerCallback<T extends Activity> implements Handler.Callback {
+		protected WeakReference<T> obj;
+
+		public DefaultHandlerCallback(T obj) {
+			this.obj = new WeakReference<T>(obj);
+		}
+
+		public boolean handleMessage(android.os.Message msg) {
+			switch (msg.what) {
+				case cBluetooth.BL_NOT_AVAILABLE:
+					Log.d(cBluetooth.TAG, "Bluetooth is not available. Exit");
+					Toast.makeText(obj.get().getBaseContext(), "Bluetooth is not available", Toast.LENGTH_SHORT).show();
+					obj.get().finish();
+					break;
+				case cBluetooth.BL_INCORRECT_ADDRESS:
+					Log.d(cBluetooth.TAG, "Incorrect MAC address");
+					Toast.makeText(obj.get().getBaseContext(), "Incorrect Bluetooth address", Toast.LENGTH_SHORT).show();
+					break;
+				case cBluetooth.BL_REQUEST_ENABLE:
+					Log.d(cBluetooth.TAG, "Request Bluetooth Enable");
+					BluetoothAdapter.getDefaultAdapter();
+					Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+					obj.get().startActivityForResult(enableBtIntent, 1);
+					break;
+				case cBluetooth.BL_SOCKET_FAILED:
+					Toast.makeText(obj.get().getBaseContext(), "Socket failed", Toast.LENGTH_SHORT).show();
+					obj.get().finish();
+					break;
+				case cBluetooth.BL_INITIALIZED:
+					// TODO
+					//bl.connect(address);
+					break;
+			}
+			return true;
+		};
+	};
+
+	public cBluetooth(Context context, Handler.Callback handlerCallback) {
 		mContext = context;
-		mHandler = handler;
+		mHandler = new Handler(handlerCallback);
 
 		Intent gattServiceIntent = new Intent(context, BluetoothLeService.class);
 		mContext.bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
