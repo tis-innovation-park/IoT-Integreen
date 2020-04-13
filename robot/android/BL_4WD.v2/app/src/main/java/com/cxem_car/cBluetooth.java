@@ -18,23 +18,23 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-public class cBluetooth
+class cBluetooth
 {
-	public final static String TAG = "BL_4WD";
+	final static String TAG = "BL_4WD";
 
-	public final static UUID UUID_SERVICE = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
-	public final static UUID UUID_CHARACTERISTIC = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+	private final static UUID UUID_SERVICE = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
+	private final static UUID UUID_CHARACTERISTIC = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
 
 	private final Context mContext;
 	private final String mAddress;
 	private final Handler mHandler;
 	private BluetoothLeService mBtLeService;
 
-	public final static int BL_NOT_AVAILABLE = 1;
-	public final static int BL_INCORRECT_ADDRESS = 2;
-	public final static int BL_REQUEST_ENABLE = 3;
-	public final static int BL_CONNECTION_PROBLEM = 4;
-	public final static int RECEIVE_MESSAGE = 10;
+	private final static int BL_NOT_AVAILABLE = 1;
+	private final static int BL_INCORRECT_ADDRESS = 2;
+	private final static int BL_REQUEST_ENABLE = 3;
+	private final static int BL_CONNECTION_PROBLEM = 4;
+	final static int RECEIVE_MESSAGE = 10;
 
 	// Code to manage Service lifecycle.
 	private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -91,11 +91,11 @@ public class cBluetooth
 		}
 	};
 
-	public static class DefaultHandlerCallback<T extends Activity> implements Handler.Callback {
-		protected WeakReference<T> obj;
+	static class DefaultHandlerCallback<T extends Activity> implements Handler.Callback {
+		final WeakReference<T> obj;
 
 		public DefaultHandlerCallback(T obj) {
-			this.obj = new WeakReference<T>(obj);
+			this.obj = new WeakReference<>(obj);
 		}
 
 		public boolean handleMessage(android.os.Message msg) {
@@ -121,10 +121,10 @@ public class cBluetooth
 					break;
 			}
 			return true;
-		};
-	};
+		}
+	}
 
-	public cBluetooth(Context context, String address, Handler.Callback handlerCallback) {
+	cBluetooth(Context context, String address, Handler.Callback handlerCallback) {
 		mContext = context;
 		mAddress = address;
 		mHandler = new Handler(handlerCallback);
@@ -147,7 +147,7 @@ public class cBluetooth
 		return intentFilter;
 	}
 
-	public void connect() {
+	void connect() {
 		Log.d(TAG, "...On Resume...");
 
 		if (mBtLeService == null)
@@ -158,11 +158,10 @@ public class cBluetooth
 		if (!mBtLeService.connect(mAddress)) {
 			Log.d(TAG, "In onResume() and connect() failed");
 			mHandler.sendEmptyMessage(BL_CONNECTION_PROBLEM);
-			return;
 		}
 	}
 
-	public void close() {
+	void close() {
 		Log.d(TAG, "...On Destroy...");
 
 		if (mBtLeService == null)
@@ -174,7 +173,7 @@ public class cBluetooth
 		mBtLeService = null;
 	}
 
-	public void sendData(String message) {
+	void sendData(String message) {
 		BluetoothGattService s = mBtLeService.getService(UUID_SERVICE);
 		if (s == null) {
 			Log.d(TAG, "In sendData() and service not found");
