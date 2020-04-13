@@ -36,7 +36,8 @@
         </activity>
         <activity
             android:name=".SetPreferenceActivity"
-            android:label="@string/title_activity_main" >
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
             android:name=".ActivityButtons"

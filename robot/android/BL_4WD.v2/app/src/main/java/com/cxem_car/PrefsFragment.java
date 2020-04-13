@@ -1,16 +1,14 @@
 package com.cxem_car;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
+import android.support.v7.preference.PreferenceFragmentCompat;
 
-public class PrefsFragment extends PreferenceFragment {
+public class PrefsFragment extends PreferenceFragmentCompat {
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
-  
+	public void onCreatePreferences(Bundle bundle, String s) {
 		// Load the preferences from an XML resource
-        addPreferencesFromResource(R.xml.pref);
+		addPreferencesFromResource(R.xml.pref);
 	}
 }
