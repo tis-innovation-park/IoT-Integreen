@@ -21,7 +21,7 @@
     <string name="left">left</string>
     <string name="right">right</string>
     <string name="center">center</string>
-    <string name="text_about">You can download the latest versions of the software and source code from the <![CDATA[<a href="http://english.cxem.net/mcu/mcu2.php">official project page</a>]]>. This version has been modified for use at the TIS innovation park - 2014.</string>
+    <string name="text_about">This version (<![CDATA[<a href="https://github.com/tis-innovation-park/IoT-Integreen">official project page</a>]]>) has been modified at the TIS innovation park in 2014 and then ported to the Bluetooth LE technology in 2020. The original version is <![CDATA[<a href="http://english.cxem.net/mcu/mcu2.php">available here</a>]]>.</string>
     <string name="mcu_textInfo1">Settings for the MCU. The parameters are transferred and stored in the MCU EEPROM memory</string>
     <string name="mcu_textStop">Stop when the connection is lost:</string>
     <string name="mcu_cBox_AutoOFF">On</string>
