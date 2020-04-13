@@ -18,14 +18,5 @@ public class ActivityAbout extends Activity {
 		tv.setMovementMethod(LinkMovementMethod.getInstance());
 		
 	}
-    
-    @Override
-    protected void onResume() {
-    	super.onResume();
-    }
 
-    @Override
-    protected void onPause() {
-    	super.onPause();
-    }
 }
