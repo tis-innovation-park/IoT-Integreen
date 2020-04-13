@@ -33,7 +33,7 @@ public class cBluetooth
 	public final static int BL_NOT_AVAILABLE = 1;
 	public final static int BL_INCORRECT_ADDRESS = 2;
 	public final static int BL_REQUEST_ENABLE = 3;
-	public final static int BL_SOCKET_FAILED = 4;
+	public final static int BL_CONNECTION_PROBLEM = 4;
 	public final static int RECEIVE_MESSAGE = 10;
 
 	// Code to manage Service lifecycle.
@@ -102,12 +102,12 @@ public class cBluetooth
 			switch (msg.what) {
 				case cBluetooth.BL_NOT_AVAILABLE:
 					Log.d(cBluetooth.TAG, "Bluetooth is not available. Exit");
-					Toast.makeText(obj.get().getBaseContext(), "Bluetooth is not available", Toast.LENGTH_SHORT).show();
+					Toast.makeText(obj.get().getBaseContext(), R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
 					obj.get().finish();
 					break;
 				case cBluetooth.BL_INCORRECT_ADDRESS:
 					Log.d(cBluetooth.TAG, "Incorrect MAC address");
-					Toast.makeText(obj.get().getBaseContext(), "Incorrect Bluetooth address", Toast.LENGTH_SHORT).show();
+					Toast.makeText(obj.get().getBaseContext(), R.string.ble_incorrect_address, Toast.LENGTH_SHORT).show();
 					break;
 				case cBluetooth.BL_REQUEST_ENABLE:
 					Log.d(cBluetooth.TAG, "Request Bluetooth Enable");
@@ -115,8 +115,8 @@ public class cBluetooth
 					Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 					obj.get().startActivityForResult(enableBtIntent, 1);
 					break;
-				case cBluetooth.BL_SOCKET_FAILED:
-					Toast.makeText(obj.get().getBaseContext(), "Socket failed", Toast.LENGTH_SHORT).show();
+				case cBluetooth.BL_CONNECTION_PROBLEM:
+					Toast.makeText(obj.get().getBaseContext(), R.string.ble_connection_problem, Toast.LENGTH_SHORT).show();
 					obj.get().finish();
 					break;
 			}
@@ -156,8 +156,8 @@ public class cBluetooth
 		mContext.registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
 
 		if (!mBtLeService.connect(mAddress)) {
-			Log.d(TAG, "In onResume() and socket create failed");
-			mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
+			Log.d(TAG, "In onResume() and connect() failed");
+			mHandler.sendEmptyMessage(BL_CONNECTION_PROBLEM);
 			return;
 		}
 	}
@@ -177,15 +177,15 @@ public class cBluetooth
 	public void sendData(String message) {
 		BluetoothGattService s = mBtLeService.getService(UUID_SERVICE);
 		if (s == null) {
-			Log.d(TAG, "In sendData() and an exception occurred during read");
-			mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
+			Log.d(TAG, "In sendData() and service not found");
+			mHandler.sendEmptyMessage(BL_CONNECTION_PROBLEM);
 			return;
 		}
 
 		BluetoothGattCharacteristic c = s.getCharacteristic(UUID_CHARACTERISTIC);
 		if (c == null) {
-			Log.d(TAG, "In sendData() and an exception occurred during read");
-			mHandler.sendEmptyMessage(BL_SOCKET_FAILED);
+			Log.d(TAG, "In sendData() and service not found");
+			mHandler.sendEmptyMessage(BL_CONNECTION_PROBLEM);
 			return;
 		}
 

@@ -48,12 +48,12 @@
     <string name="img_cxemnet_logo">logo</string>
     <string name="img_photo4wd">photo</string>
     <string name="title_activity_servo">ActivityServo</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="up">up</string>
     <string name="down">down</string>
     <string name="btn_servo">Servo motor control</string>
     <string name="lift">lift</string>
     <string name="ble_not_supported">BLE is not supported</string>
-
+    <string name="ble_incorrect_address">Incorrect Bluetooth address</string>
+    <string name="ble_connection_problem">BLE connection problem (did you choose the correct device?)</string>
 </resources>
