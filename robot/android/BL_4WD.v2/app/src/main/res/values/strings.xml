@@ -32,7 +32,7 @@
     <string name="err_data_entry">Data entry error</string>
     <string name="flash_success">Data successfully written in Flash</string>
     <string name="error_get_data">Data receive error</string>
-    <string name="default_MAC">00:14:01:21:30:70</string>
+    <string name="default_MAC">18:93:D7:4B:82:DC</string>
     <string name="default_xR">5</string>
     <string name="default_xMax">7</string>
     <string name="default_yMax">5</string>
