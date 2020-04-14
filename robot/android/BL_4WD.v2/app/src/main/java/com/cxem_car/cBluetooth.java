@@ -25,16 +25,13 @@ class cBluetooth
 	private final static UUID UUID_SERVICE = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
 	private final static UUID UUID_CHARACTERISTIC = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
 
-	private final Context mContext;
+	private final Activity mContext;
 	private final String mAddress;
 	private final Handler mHandler;
 	private BluetoothLeService mBtLeService;
 
-	private final static int BL_NOT_AVAILABLE = 1;
-	private final static int BL_INCORRECT_ADDRESS = 2;
-	private final static int BL_REQUEST_ENABLE = 3;
-	private final static int BL_CONNECTION_PROBLEM = 4;
-	final static int RECEIVE_MESSAGE = 10;
+	private final static int BL_CONNECTION_PROBLEM = 1;
+	final static int BL_RECEIVE_MESSAGE = 2;
 
 	// Code to manage Service lifecycle.
 	private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -43,7 +40,9 @@ class cBluetooth
 		public void onServiceConnected(ComponentName componentName, IBinder service) {
 			mBtLeService = ((BluetoothLeService.LocalBinder) service).getService();
 			if (!mBtLeService.initialize()) {
-				mHandler.sendEmptyMessage(BL_NOT_AVAILABLE);
+				Log.d(TAG, "Bluetooth is not available.");
+				Toast.makeText(mContext.getBaseContext(), R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+				mContext.finish();
 				return;
 			}
 			// pass on to connect
@@ -75,8 +74,19 @@ class cBluetooth
 			} else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
 				Log.i(TAG, "Services Discovered");
 				// Enable Notifications
-				BluetoothGattCharacteristic characteristic = mBtLeService.getService(UUID_SERVICE).getCharacteristic(UUID_CHARACTERISTIC);
-				mBtLeService.setCharacteristicNotification(characteristic, true);
+				BluetoothGattService s = mBtLeService.getService(UUID_SERVICE);
+				if (s == null) {
+					Log.d(TAG, "In onReceive() and service not found");
+					mHandler.sendEmptyMessage(BL_CONNECTION_PROBLEM);
+					return;
+				}
+				BluetoothGattCharacteristic c = s.getCharacteristic(UUID_CHARACTERISTIC);
+				if (c == null) {
+					Log.d(TAG, "In onReceive() and service characteristic not found");
+					mHandler.sendEmptyMessage(BL_CONNECTION_PROBLEM);
+					return;
+				}
+				mBtLeService.setCharacteristicNotification(c, true);
 			} else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
 				// Read from the InputStream. Since buffering differs on
 				// Android and Arduino side we need to keep up our reading
@@ -84,7 +94,7 @@ class cBluetooth
 				recvData.append(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
 				if (recvData.length() > 0 && recvData.charAt(recvData.length()-1) == '\n') {
 					Log.i(TAG, "Receive data: " + recvData);
-					mHandler.obtainMessage(RECEIVE_MESSAGE, -1, -1, recvData).sendToTarget();
+					mHandler.obtainMessage(BL_RECEIVE_MESSAGE, -1, -1, recvData).sendToTarget();
 					recvData = new StringBuilder(); // re-start from scratch
 				}
 			}
@@ -100,37 +110,23 @@ class cBluetooth
 
 		public boolean handleMessage(android.os.Message msg) {
 			switch (msg.what) {
-				case cBluetooth.BL_NOT_AVAILABLE:
-					Log.d(cBluetooth.TAG, "Bluetooth is not available. Exit");
-					Toast.makeText(obj.get().getBaseContext(), R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-					obj.get().finish();
-					break;
-				case cBluetooth.BL_INCORRECT_ADDRESS:
-					Log.d(cBluetooth.TAG, "Incorrect MAC address");
-					Toast.makeText(obj.get().getBaseContext(), R.string.ble_incorrect_address, Toast.LENGTH_SHORT).show();
-					break;
-				case cBluetooth.BL_REQUEST_ENABLE:
-					Log.d(cBluetooth.TAG, "Request Bluetooth Enable");
-					BluetoothAdapter.getDefaultAdapter();
-					Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-					obj.get().startActivityForResult(enableBtIntent, 1);
-					break;
 				case cBluetooth.BL_CONNECTION_PROBLEM:
 					Toast.makeText(obj.get().getBaseContext(), R.string.ble_connection_problem, Toast.LENGTH_SHORT).show();
-					obj.get().finish();
 					break;
 			}
 			return true;
 		}
 	}
 
-	cBluetooth(Context context, String address, Handler.Callback handlerCallback) {
+	cBluetooth(Activity context, String address, Handler.Callback handlerCallback) {
 		mContext = context;
 		mAddress = address;
 		mHandler = new Handler(handlerCallback);
 
 		if(!BluetoothAdapter.checkBluetoothAddress(mAddress)){
-			mHandler.sendEmptyMessage(BL_INCORRECT_ADDRESS);
+			Log.d(TAG, "Incorrect MAC address");
+			Toast.makeText(mContext.getBaseContext(), R.string.ble_incorrect_address, Toast.LENGTH_SHORT).show();
+			mContext.finish();
 			return;
 		}
 
@@ -174,6 +170,9 @@ class cBluetooth
 	}
 
 	void sendData(String message) {
+		if (mBtLeService == null)
+		    return;
+
 		BluetoothGattService s = mBtLeService.getService(UUID_SERVICE);
 		if (s == null) {
 			Log.d(TAG, "In sendData() and service not found");
@@ -183,7 +182,7 @@ class cBluetooth
 
 		BluetoothGattCharacteristic c = s.getCharacteristic(UUID_CHARACTERISTIC);
 		if (c == null) {
-			Log.d(TAG, "In sendData() and service not found");
+			Log.d(TAG, "In sendData() and service characteristic not found");
 			mHandler.sendEmptyMessage(BL_CONNECTION_PROBLEM);
 			return;
 		}

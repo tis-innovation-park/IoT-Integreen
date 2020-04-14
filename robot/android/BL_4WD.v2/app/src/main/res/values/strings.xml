@@ -55,5 +55,5 @@
     <string name="lift">lift</string>
     <string name="ble_not_supported">BLE is not supported</string>
     <string name="ble_incorrect_address">Incorrect Bluetooth address</string>
-    <string name="ble_connection_problem">BLE connection problem (did you choose the correct device?)</string>
+    <string name="ble_connection_problem">BLE connection problem (Did you specify the correct device? Have you switched it on?)</string>
 </resources>

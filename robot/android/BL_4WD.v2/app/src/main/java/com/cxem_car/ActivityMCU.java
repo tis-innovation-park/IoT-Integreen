@@ -105,7 +105,7 @@ public class ActivityMCU  extends Activity{
 	private final Handler.Callback myHandlerCallback = new cBluetooth.DefaultHandlerCallback<ActivityMCU>(this) {
 		@Override
 		public boolean handleMessage(android.os.Message msg) {
-			if (msg.what == cBluetooth.RECEIVE_MESSAGE) {
+			if (msg.what == cBluetooth.BL_RECEIVE_MESSAGE) {
 				StringBuilder sb = (StringBuilder) msg.obj;
 
 				int FDataLineIndex = sb.indexOf("FData:");					// ������ � Flash ������� (������)
