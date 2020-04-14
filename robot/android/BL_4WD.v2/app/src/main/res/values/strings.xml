@@ -28,10 +28,9 @@
     <string name="mcu_after_sec">After (second):</string>
     <string name="mcu_flash_Read">Read data</string>
     <string name="mcu_flash_Write">Write data</string>
-    <string name="mcu_error_range">Enter the correct value (1.00 &#8211; 99.9)</string>
-    <string name="err_data_entry">Data entry error</string>
-    <string name="flash_success">Data successfully written in Flash</string>
-    <string name="error_get_data">Data receive error</string>
+    <string name="mcu_error_range">Enter the correct value (01.0 &#8211; 99.9)</string>
+    <string name="mcu_flash_success">Data successfully written in Flash</string>
+    <string name="mcu_error_get_data">Data receive error</string>
     <string name="default_MAC">18:93:D7:4B:82:DC</string>
     <string name="default_xR">5</string>
     <string name="default_xMax">7</string>

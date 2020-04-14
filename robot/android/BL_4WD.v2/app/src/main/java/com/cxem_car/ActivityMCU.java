@@ -1,6 +1,7 @@
 package com.cxem_car;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -59,45 +60,35 @@ public class ActivityMCU  extends Activity{
         btn_flash_Write.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				synchronized (ActivityMCU.this) {
-					float num1 = 0; // default is 0 [s] when no value has been set
 					String str_to_send = "Fw";
-					
+
 					if(cb_AutoOFF.isChecked()) {
+						float num1 = 0; // default is 0 [s] when no value has been set
 						str_to_send += "1";
-						
+
+						DecimalFormat myFormatter = new DecimalFormat("00.0");
 						try {
-					        num1 = Float.parseFloat(edit_AutoOFF.getText().toString());
-					    } catch (NumberFormatException e) {
-					    	String err_data_entry = getString(R.string.err_data_entry); 
-					    	Toast.makeText(getBaseContext(), err_data_entry, Toast.LENGTH_SHORT).show();
-					    	return;
-					    }
-			
-						if (num1 < 1 || num1 >= 100) {
-							String err_range = getString(R.string.mcu_error_range); 
-							Toast.makeText(getBaseContext(), err_range, Toast.LENGTH_SHORT).show();
+							num1 = myFormatter.parse(edit_AutoOFF.getText().toString()).floatValue();
+						} catch (ParseException e) {
+							Toast.makeText(getBaseContext(), R.string.mcu_error_range, Toast.LENGTH_SHORT).show();
 							return;
-						}	
+						}
+
+						if (num1 < 01.0 || num1 >= 99.9) {
+							Toast.makeText(getBaseContext(), R.string.mcu_error_range, Toast.LENGTH_SHORT).show();
+							return;
+						}
+
+						String output = myFormatter.format(num1);
+						Log.d(ActivityMCU.class.getSimpleName(), "Watchdog value [s]: " + output);
+						str_to_send += String.format("%c%c%c\t", output.charAt(0), output.charAt(1), output.charAt(3));
 					} else {
-						str_to_send += "0";
-						
-						try {
-					        num1 = Float.parseFloat(edit_AutoOFF.getText().toString());
-					    } catch (NumberFormatException e) {
-					    	// use default 0 [s] when no value has been set
-					    }
+						str_to_send += "0000\t";
 					}
-		    						
-					DecimalFormat myFormatter = new DecimalFormat("00.0");
-				    String output = myFormatter.format(num1);
-					
-				    str_to_send += output.charAt(0) + output.charAt(1) + output.charAt(3);
-				    str_to_send += "\t";
-				    		
-				    Log.d(cBluetooth.TAG, "Send Flash Op:" + str_to_send);
-				    bl.sendData(str_to_send);
-					//Toast.makeText(getBaseContext(), str_to_send, Toast.LENGTH_SHORT).show();
-		    	}
+
+					Log.d(cBluetooth.TAG, "Send Flash Op:" + str_to_send);
+					bl.sendData(str_to_send);
+				}
 			}
 	    });
     }
@@ -128,12 +119,10 @@ public class ActivityMCU  extends Activity{
 					}
 				}
 				else if (FWOKLineIndex >= 0 && endOfLineIndex > 0 && endOfLineIndex > FWOKLineIndex) {
-					String flash_success = obj.get().getString(R.string.flash_success);
-					Toast.makeText(obj.get().getBaseContext(), flash_success, Toast.LENGTH_SHORT).show();
+					Toast.makeText(obj.get().getBaseContext(), R.string.mcu_flash_success, Toast.LENGTH_SHORT).show();
 				}
 				else if(endOfLineIndex > 0) {
-					String error_get_data = obj.get().getString(R.string.error_get_data);
-					Toast.makeText(obj.get().getBaseContext(), error_get_data, Toast.LENGTH_SHORT).show();
+					Toast.makeText(obj.get().getBaseContext(), R.string.mcu_error_get_data, Toast.LENGTH_SHORT).show();
 				}
 
 				return true;
