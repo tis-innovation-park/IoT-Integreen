@@ -30,28 +30,28 @@ public class ActivityMCU  extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mcu);
         
-        btn_flash_Read = (Button) findViewById(R.id.flash_Read);
-        btn_flash_Write = (Button) findViewById(R.id.flash_Write);
-        cb_AutoOFF = (CheckBox) findViewById(R.id.cBox_AutoOFF);
-        edit_AutoOFF = (EditText) findViewById(R.id.AutoOFF);
+        btn_flash_Read = findViewById(R.id.flash_Read);
+        btn_flash_Write = findViewById(R.id.flash_Write);
+        cb_AutoOFF = findViewById(R.id.cBox_AutoOFF);
+        edit_AutoOFF = findViewById(R.id.AutoOFF);
         
 		loadPref();
 
 	    bl = new cBluetooth(this, address, myHandlerCallback);
 
-	    cb_AutoOFF.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        cb_AutoOFF.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            	synchronized (ActivityMCU.this) {
-	            	if (isChecked) edit_AutoOFF.setEnabled(true);
-	            	else if (!isChecked) edit_AutoOFF.setEnabled(false);
-            	}
+                synchronized (ActivityMCU.this) {
+                    if (isChecked) edit_AutoOFF.setEnabled(true);
+                    else edit_AutoOFF.setEnabled(false);
+                }
             }
         });
         
         btn_flash_Read.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				synchronized (ActivityMCU.this) {
-					bl.sendData(String.valueOf("Fr\t"));
+					bl.sendData("Fr\t");
 				}
 	    	}
 	    });
@@ -91,7 +91,7 @@ public class ActivityMCU  extends Activity{
 					DecimalFormat myFormatter = new DecimalFormat("00.0");
 				    String output = myFormatter.format(num1);
 					
-				    str_to_send += String.valueOf(output.charAt(0)) + String.valueOf(output.charAt(1)) + String.valueOf(output.charAt(3));
+				    str_to_send += output.charAt(0) + output.charAt(1) + output.charAt(3);
 				    str_to_send += "\t";
 				    		
 				    Log.d(cBluetooth.TAG, "Send Flash Op:" + str_to_send);

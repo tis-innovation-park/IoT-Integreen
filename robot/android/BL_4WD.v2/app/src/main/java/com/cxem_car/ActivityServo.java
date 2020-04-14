@@ -33,18 +33,18 @@ public class ActivityServo extends Activity {
      * Button handler
      */
 	private void buttonHandler() {
-      	cmdSend = commandServo+motorServo+"\r";
-        TextView mServo = (TextView) findViewById(R.id.mServo);
-        TextView textCmdSend = (TextView) findViewById(R.id.textViewCmdSend);
+        cmdSend = commandServo+motorServo+"\r";
+        TextView mServo = findViewById(R.id.mServo);
+        TextView textCmdSend = findViewById(R.id.textViewCmdSend);
         if (show_Debug) {
-	        mServo.setText(String.valueOf("Motor:" + motorServo));
-	        textCmdSend.setText(String.valueOf("Send:" + cmdSend.toUpperCase(Locale.US)));
+            mServo.setText("Motor:" + motorServo);
+            textCmdSend.setText("Send:" + cmdSend.toUpperCase(Locale.US));
         } else {
         	mServo.setText("");
         	textCmdSend.setText("");
         }
-	}	
-	
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,9 +54,9 @@ public class ActivityServo extends Activity {
 		
 	    bl = new cBluetooth(this, address, new cBluetooth.DefaultHandlerCallback<>(this));
 
-	    btn_up = (Button) findViewById(R.id.button_up);
-	    btn_down = (Button) findViewById(R.id.button_down);
-	    btn_lift = (Button) findViewById(R.id.button_lift);
+	    btn_up = findViewById(R.id.button_up);
+	    btn_down = findViewById(R.id.button_down);
+	    btn_lift = findViewById(R.id.button_lift);
 	    
 	    btn_up.setOnTouchListener(new OnTouchListener() {
 			public boolean onTouch(View v, MotionEvent event) {

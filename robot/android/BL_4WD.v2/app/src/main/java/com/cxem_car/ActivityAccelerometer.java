@@ -50,13 +50,13 @@ public class ActivityAccelerometer extends Activity implements SensorEventListen
         
         bl = new cBluetooth(this, address, new cBluetooth.DefaultHandlerCallback<>(this));
         
-        onOffButton = (ToggleButton) findViewById(R.id.OnOffButton);
+        onOffButton = findViewById(R.id.OnOffButton);
         onOffButton.setOnClickListener(new OnClickListener() {
     		public void onClick(View v) {
     			if(onOffButton.isChecked()){
-    				bl.sendData(String.valueOf(commandHorn+"1\r"));
+    				bl.sendData(commandHorn+"1\r");
     			}else{
-    				bl.sendData(String.valueOf(commandHorn+"0\r"));
+    				bl.sendData(commandHorn+"0\r");
     			}
     		}
     	});
@@ -113,21 +113,21 @@ public class ActivityAccelerometer extends Activity implements SensorEventListen
         if(motorLeft > pwmMax) motorLeft = pwmMax;
         if(motorRight > pwmMax) motorRight = pwmMax;
         
-        cmdSend = String.valueOf(commandLeft+directionL+motorLeft+"\r"+commandRight+directionR+motorRight+"\r");
+        cmdSend = commandLeft+directionL+motorLeft+"\r"+commandRight+directionR+motorRight+"\r";
         bl.sendData(cmdSend);
 
-        TextView textX = (TextView) findViewById(R.id.textViewX);
-        TextView textY = (TextView) findViewById(R.id.textViewY);
-        TextView mLeft = (TextView) findViewById(R.id.mLeft);
-        TextView mRight = (TextView) findViewById(R.id.mRight);
-        TextView textCmdSend = (TextView) findViewById(R.id.textViewCmdSend);
+        TextView textX = findViewById(R.id.textViewX);
+        TextView textY = findViewById(R.id.textViewY);
+        TextView mLeft = findViewById(R.id.mLeft);
+        TextView mRight = findViewById(R.id.mRight);
+        TextView textCmdSend = findViewById(R.id.textViewCmdSend);
         
         if(show_Debug){
-        	textX.setText(String.valueOf("X:" + String.format("%.1f",e.values[0]) + "; xPWM:"+xAxis));
-	        textY.setText(String.valueOf("Y:" + String.format("%.1f",e.values[1]) + "; yPWM:"+yAxis));
-	        mLeft.setText(String.valueOf("MotorL:" + directionL + "." + motorLeft));
-	        mRight.setText(String.valueOf("MotorR:" + directionR + "." + motorRight));
-	        textCmdSend.setText(String.valueOf("Send:" + cmdSend.toUpperCase(Locale.US)));
+            textX.setText("X:" + String.format("%.1f",e.values[0]) + "; xPWM:"+xAxis);
+            textY.setText("Y:" + String.format("%.1f",e.values[1]) + "; yPWM:"+yAxis);
+            mLeft.setText("MotorL:" + directionL + "." + motorLeft);
+            mRight.setText("MotorR:" + directionR + "." + motorRight);
+            textCmdSend.setText("Send:" + cmdSend.toUpperCase(Locale.US));
         }
         else{
         	textX.setText("");
@@ -151,7 +151,7 @@ public class ActivityAccelerometer extends Activity implements SensorEventListen
     	commandLeft = mySharedPreferences.getString("pref_commandLeft", commandLeft);
     	commandRight = mySharedPreferences.getString("pref_commandRight", commandRight);
     	commandHorn = mySharedPreferences.getString("pref_commandHorn", commandHorn);
-	}
+    }
 
     @Override
     protected void onResume() {

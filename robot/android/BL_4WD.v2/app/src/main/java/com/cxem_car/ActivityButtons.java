@@ -36,15 +36,15 @@ public class ActivityButtons extends Activity {
      */
 	private void buttonHandler() {
 		String cmdSend = "";
-      	cmdSend = commandLeft+motorLeft+"\r"+commandRight+motorRight+"\r";
-       	bl.sendData(cmdSend);
-        TextView mLeft = (TextView) findViewById(R.id.mLeft);
-        TextView mRight = (TextView) findViewById(R.id.mRight);
-        TextView textCmdSend = (TextView) findViewById(R.id.textViewCmdSend);
+		cmdSend = commandLeft+motorLeft+"\r"+commandRight+motorRight+"\r";
+		bl.sendData(cmdSend);
+        TextView mLeft = findViewById(R.id.mLeft);
+        TextView mRight = findViewById(R.id.mRight);
+        TextView textCmdSend = findViewById(R.id.textViewCmdSend);
         if (show_Debug) {
-	        mLeft.setText(String.valueOf("MotorL:" + motorLeft));
-	        mRight.setText(String.valueOf("MotorR:" + motorRight));
-	        textCmdSend.setText(String.valueOf("Send:" + cmdSend.toUpperCase(Locale.US)));
+	        mLeft.setText("MotorL:" + motorLeft);
+	        mRight.setText("MotorR:" + motorRight);
+	        textCmdSend.setText("Send:" + cmdSend.toUpperCase(Locale.US));
         } else {
         	mLeft.setText("");
         	mRight.setText("");
@@ -61,10 +61,10 @@ public class ActivityButtons extends Activity {
 		
 	    bl = new cBluetooth(this, address, new cBluetooth.DefaultHandlerCallback<>(this));
 		
-		btn_forward = (Button) findViewById(R.id.forward);
-		btn_backward = (Button) findViewById(R.id.backward);
-		btn_left = (Button) findViewById(R.id.left);
-		btn_right = (Button) findViewById(R.id.right);
+		btn_forward = findViewById(R.id.forward);
+		btn_backward = findViewById(R.id.backward);
+		btn_left = findViewById(R.id.left);
+		btn_right = findViewById(R.id.right);
 		       
 		btn_forward.setOnTouchListener(new OnTouchListener() {
 			public boolean onTouch(View v, MotionEvent event) {
@@ -138,16 +138,16 @@ public class ActivityButtons extends Activity {
 		    }
 		});
 		
-		onOffButton = (ToggleButton) findViewById(R.id.OnOffButton);   
+		onOffButton = findViewById(R.id.OnOffButton);
 		onOffButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				if(onOffButton.isChecked()){
-	    			bl.sendData(String.valueOf(commandHorn+"1\r"));
-	    		}else{
-	    			bl.sendData(String.valueOf(commandHorn+"0\r"));
-	    		}
-	    	}
-	    });		
+					bl.sendData(commandHorn+"1\r");
+				}else{
+					bl.sendData(commandHorn+"0\r");
+				}
+			}
+		});
 	}
 
 	

@@ -47,9 +47,9 @@ public class ActivityTouch extends Activity {
         onOffButton.setOnClickListener(new OnClickListener() {
     		public void onClick(View v) {
     			if(onOffButton.isChecked()){
-    				bl.sendData(String.valueOf(commandHorn+"1\r"));
+    				bl.sendData(commandHorn+"1\r");
     			}else{
-    				bl.sendData(String.valueOf(commandHorn+"0\r"));
+    				bl.sendData(commandHorn+"0\r");
     			}
     		}
     	});
@@ -112,9 +112,9 @@ public class ActivityTouch extends Activity {
             canvas.drawCircle(dispWidth, dispHeight, BIG_CIRCLE_SIZE, borderPaint);
             
             if(show_Debug){
-	            canvas.drawText(String.valueOf("X:"+xcirc), 10, 80, textPaint);
-	            canvas.drawText(String.valueOf("Y:"+(-ycirc)), 10, 95, textPaint);
-	            canvas.drawText(String.valueOf("Motor:"+temptxtMotor), 10, 115, textPaint);
+                canvas.drawText("X:"+xcirc, 10, 80, textPaint);
+                canvas.drawText("Y:"+(-ycirc), 10, 95, textPaint);
+                canvas.drawText("Motor:"+temptxtMotor, 10, 115, textPaint);
             }
         }
 
@@ -127,7 +127,7 @@ public class ActivityTouch extends Activity {
                           
         	xcirc = evX - dispWidth;
         	ycirc = evY - dispHeight;
-        	//Log.d("4WD", String.valueOf("X:"+this.getRight()+" Y:"+dispHeight));
+        	//Log.d("4WD", "X:"+this.getRight()+" Y:"+dispHeight);
             	   
         	float radius = (float) Math.sqrt(Math.pow(Math.abs(xcirc),2)+Math.pow(Math.abs(ycirc),2));
 
@@ -200,12 +200,12 @@ public class ActivityTouch extends Activity {
     	motorLeft = -Math.round((float)(Math.sin(phi) * pwm));
     	motorRight = -Math.round((float)(Math.cos(phi) * pwm));
     	
-        String cmdSend = String.valueOf(commandLeft+directionL+motorLeft+"\r"+commandRight+directionR+motorRight+"\r");	
+        String cmdSend = commandLeft+directionL+motorLeft+"\r"+commandRight+directionR+motorRight+"\r";
         bl.sendData(cmdSend);
         
 		return cmdSend;
 	}
-		
+
 	@Override
     protected void onResume() {
         super.onResume();
@@ -227,5 +227,5 @@ public class ActivityTouch extends Activity {
     	commandLeft = mySharedPreferences.getString("pref_commandLeft", commandLeft);
     	commandRight = mySharedPreferences.getString("pref_commandRight", commandRight);
     	commandHorn = mySharedPreferences.getString("pref_commandHorn", commandHorn);
-	}
+    }
 }

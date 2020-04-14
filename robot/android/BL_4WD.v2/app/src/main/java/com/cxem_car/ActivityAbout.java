@@ -13,7 +13,7 @@ public class ActivityAbout extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_about);
 		
-		TextView tv = (TextView) findViewById(R.id.textView_about);
+		TextView tv = findViewById(R.id.textView_about);
 		tv.setText(Html.fromHtml(getString(R.string.text_about)));
 		tv.setMovementMethod(LinkMovementMethod.getInstance());
 		
