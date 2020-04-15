@@ -6,7 +6,6 @@ import java.util.UUID;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -29,6 +28,7 @@ class cBluetooth
 	private final String mAddress;
 	private final Handler mHandler;
 	private BluetoothLeService mBtLeService;
+	private BluetoothGattCharacteristic mBtCharacteristic;
 
 	private final static int BL_CONNECTION_PROBLEM = 1;
 	final static int BL_RECEIVE_MESSAGE = 2;
@@ -73,20 +73,14 @@ class cBluetooth
 				close();
 			} else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
 				Log.i(TAG, "Services Discovered");
-				// Enable Notifications
-				BluetoothGattService s = mBtLeService.getService(UUID_SERVICE);
-				if (s == null) {
-					Log.d(TAG, "In onReceive() and service not found");
-					mHandler.sendEmptyMessage(BL_CONNECTION_PROBLEM);
-					return;
-				}
-				BluetoothGattCharacteristic c = s.getCharacteristic(UUID_CHARACTERISTIC);
-				if (c == null) {
+				// Determine characteristic and enable notifications on it
+				mBtCharacteristic = mBtLeService.getCharacteristic(UUID_SERVICE, UUID_CHARACTERISTIC);
+				if (mBtCharacteristic == null) {
 					Log.d(TAG, "In onReceive() and service characteristic not found");
 					mHandler.sendEmptyMessage(BL_CONNECTION_PROBLEM);
 					return;
 				}
-				mBtLeService.setCharacteristicNotification(c, true);
+				mBtLeService.setCharacteristicNotification(mBtCharacteristic, true);
 			} else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
 				// Read from the InputStream. Since buffering differs on
 				// Android and Arduino side we need to keep up our reading
@@ -170,26 +164,12 @@ class cBluetooth
 	}
 
 	void sendData(String message) {
-		if (mBtLeService == null)
-		    return;
-
-		BluetoothGattService s = mBtLeService.getService(UUID_SERVICE);
-		if (s == null) {
-			Log.d(TAG, "In sendData() and service not found");
-			mHandler.sendEmptyMessage(BL_CONNECTION_PROBLEM);
-			return;
-		}
-
-		BluetoothGattCharacteristic c = s.getCharacteristic(UUID_CHARACTERISTIC);
-		if (c == null) {
-			Log.d(TAG, "In sendData() and service characteristic not found");
-			mHandler.sendEmptyMessage(BL_CONNECTION_PROBLEM);
-			return;
-		}
+		if (mBtLeService == null || mBtCharacteristic == null)
+		    return; // no BT LE connection or scanning not finished yet
 
 		Log.i(TAG, "Send data: " + message);
 
-		c.setValue(message);
-		mBtLeService.writeCharacteristic(c);
+		mBtCharacteristic.setValue(message);
+		mBtLeService.writeCharacteristic(mBtCharacteristic);
 	}
 }

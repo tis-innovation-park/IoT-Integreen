@@ -292,27 +292,23 @@ public class BluetoothLeService extends Service {
     }
 
     /**
-     * Returns a {@link BluetoothGattService}, if the requested UUID is
-     * supported by the remote device.
+     * Returns a characteristic with a given UUID out of the list of
+     * characteristics offered by this service.
      *
-     * <p>This function requires that service discovery has been completed
-     * for the given device.
+     * <p>If a remote service offers multiple characteristics with the same
+     * UUID, the first instance of a characteristic with the given UUID
+     * is returned.
      *
-     * <p>If multiple instances of the same service (as identified by UUID)
-     * exist, the first instance of the service is returned.
-     *
-     * <p>Requires {@link android.Manifest.permission#BLUETOOTH} permission.
-     *
-     * @param uuid UUID of the requested service
-     * @return BluetoothGattService if supported, or null if the requested service is not offered by
-     * the remote device.
+     * @return GATT characteristic object or null if no characteristic with the given UUID was
+     * found.
      */
-    public BluetoothGattService getService(UUID uuid) {
+    public BluetoothGattCharacteristic getCharacteristic(UUID serviceUuid, UUID characteristicUuid) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             Log.w(TAG, "BluetoothAdapter not initialized or not connected");
             return null;
         }
 
-        return mBluetoothGatt.getService(uuid);
+        BluetoothGattService service = mBluetoothGatt.getService(serviceUuid);
+        return service != null ? service.getCharacteristic(characteristicUuid) : null;
     }
 }
