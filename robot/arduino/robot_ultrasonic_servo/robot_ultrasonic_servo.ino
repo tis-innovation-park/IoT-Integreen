@@ -163,7 +163,7 @@ void loop() {
     lastTimeCommand = millis();                    // read the time elapsed since application start
   }
   if(millis() >= (lastTimeCommand + autoOFF)){     // if current timer >= lastTimeCommand + autoOFF
-    Control4WD(0,0,0,-1);                          // stop the car for security reasons
+    Control4WD(0,0,0,atoi(S_Data));                // stop the car for security reasons
   }
   
   // Check ultrasonic minimum distance

@@ -110,7 +110,6 @@ void loop() {
     }
     else if(incomingByte == '\r') command = cmdE;   // end of line
     else if(incomingByte == '\t') command = cmdT;   // end of line for EEPROM op
-    
 
     if(command == cmdL && (incomingByte >= '0' && incomingByte <= '9' || incomingByte == '-')){
       L_Data[L_index] = incomingByte;              // values [-][0..9] => [-][0..255]
