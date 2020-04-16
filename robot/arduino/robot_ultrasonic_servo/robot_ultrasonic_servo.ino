@@ -167,9 +167,10 @@ void loop() {
   }
   
   // Check ultrasonic minimum distance
-  int dist = sonar.ping() / US_ROUNDTRIP_CM; // Sonar distance [cm]
-  if (dist <= MIN_DISTANCE && (atoi(L_Data) > 0 || atoi(R_Data) > 0)) { // if it drives forward
-    Control4WD(0,0,0,-1);                         // stop the car for security reasons
+  unsigned dist = sonar.ping_cm();
+  if (dist > 1 && dist <= MIN_DISTANCE             // > 1 to avoid noise
+      && (atoi(L_Data) > 0 || atoi(R_Data) > 0)) { // if it drives forward
+    Control4WD(0,0,atoi(H_Data),atoi(S_Data));     // stop the car for security reasons
   }
 }
 
