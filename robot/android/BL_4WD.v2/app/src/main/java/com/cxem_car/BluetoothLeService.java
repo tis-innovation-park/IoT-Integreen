@@ -311,4 +311,17 @@ public class BluetoothLeService extends Service {
         BluetoothGattService service = mBluetoothGatt.getService(serviceUuid);
         return service != null ? service.getCharacteristic(characteristicUuid) : null;
     }
+
+    /**
+     * Tells the caller the connection state to the GATT server has been lost (e.g. on connection interruption).
+     *
+     * <p>This gets also reported asynchronously through the
+     * {@code BluetoothGattCallback#onConnectionStateChange(android.bluetooth.BluetoothGatt, int, int)}
+     * callback.
+     *
+     * @return disconnected true/false
+     */
+    public boolean isDisconnected() {
+        return mConnectionState == STATE_DISCONNECTED;
+    }
 }

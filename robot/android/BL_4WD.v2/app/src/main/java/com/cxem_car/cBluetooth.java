@@ -70,7 +70,8 @@ class cBluetooth
 			if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
 				Log.i(TAG, "Connected");
 			} else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
-				close();
+				Log.i(TAG, "Disconnected");
+				mBtCharacteristic = null;
 			} else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
 				Log.i(TAG, "Services Discovered");
 				// Determine characteristic and enable notifications on it
@@ -164,8 +165,15 @@ class cBluetooth
 	}
 
 	void sendData(String message) {
-		if (mBtLeService == null || mBtCharacteristic == null)
-		    return; // no BT LE connection or scanning not finished yet
+		if (mBtLeService != null && mBtLeService.isDisconnected()) {
+			// disconnected and no connection attempt in place, try to re-connect
+			if (!mBtLeService.connect(mAddress)) {
+				Log.d(TAG, "In sendData() and connect() failed");
+				mHandler.sendEmptyMessage(BL_CONNECTION_PROBLEM);
+			}
+		}
+		if (mBtCharacteristic == null) // a connection attempt is running, but has not finished yet
+			return;
 
 		Log.i(TAG, "Send data: " + message);
 
