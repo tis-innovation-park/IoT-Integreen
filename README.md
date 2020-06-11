@@ -6,7 +6,7 @@ Internet of Things for Integreen, but not limited to.
 Content:
 
 - robot - the Pirate - 4WD based Arduino car robot project
-- HackathonLuNa - some IoT code examples for Photon/Electron (ex Spark)
+- photon - some IoT code examples for Photon/Electron boards (ex Spark)
 - integreen folder - API usage examples (cmds.txt) of InTeGreen, Bz's open
   Intelligent Traffic System (ITS)
 - weather.txt - Howto for using South Tyrol weather data
