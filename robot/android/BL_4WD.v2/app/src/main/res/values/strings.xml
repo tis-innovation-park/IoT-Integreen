@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Cxem CAR TIS</string>
-    <string name="app_version">1.2tis</string>
+    <string name="app_version">1.3tis</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">Cxem CAR</string>
     <string name="title_activity_accelerometer">Cxem CAR - Accelerometer control</string>

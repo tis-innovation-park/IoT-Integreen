@@ -1,5 +1,6 @@
 package com.cxem_car;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,6 +54,14 @@ public class MainActivity extends Activity implements OnClickListener {
 		if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
 			Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
 			finish();
+		}
+
+		// We require the BLE permissions to be granted otherwise the app cannot be used
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+			requestPermissions(new String[]{
+					Manifest.permission.BLUETOOTH_SCAN,
+					Manifest.permission.BLUETOOTH_CONNECT
+			}, 1);
 		}
 
 		// Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to

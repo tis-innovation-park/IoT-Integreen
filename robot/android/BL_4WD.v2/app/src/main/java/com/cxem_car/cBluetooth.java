@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -144,7 +145,12 @@ class cBluetooth
 		if (mBtLeService == null)
 			return;
 
-		mContext.registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+		// For Android 14+, we must specify if the receiver is exported or not.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+			mContext.registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter(), Context.RECEIVER_EXPORTED);
+		} else {
+			mContext.registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+		}
 
 		if (!mBtLeService.connect(mAddress)) {
 			Log.d(TAG, "In onResume() and connect() failed");

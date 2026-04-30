@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cxem_car"
     android:versionName="@string/app_version" >
 
     <!-- Min/target SDK versions (<uses-sdk>) managed by build.gradle -->
@@ -11,8 +10,15 @@
     PackageManager.hasSystemFeature(FEATURE_BLUETOOTH_LE) -->
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
 
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <!-- Traditional Bluetooth permissions for older Android versions -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+
+    <!-- New Bluetooth permissions for Android 12+ (API 31+) -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- Location is usually required for BLE scanning on older versions -->
     <uses-permission android:name="android.permission.FINE_LOCATION" />
 
     <application
@@ -22,6 +28,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
+            android:exported="true"
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

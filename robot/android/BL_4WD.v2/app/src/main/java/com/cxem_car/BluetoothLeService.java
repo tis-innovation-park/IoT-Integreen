@@ -16,6 +16,7 @@
 
 package com.cxem_car;
 
+import android.Manifest;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -27,9 +28,12 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+
+import androidx.core.content.ContextCompat;
 
 import java.util.UUID;
 
@@ -192,6 +196,15 @@ public class BluetoothLeService extends Service {
         if (mBluetoothAdapter == null || address == null) {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
             return false;
+        }
+
+        // NEW: Check for BLUETOOTH_CONNECT permission on Android 12+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT)
+                    != PackageManager.PERMISSION_GRANTED) {
+                Log.e(TAG, "BLUETOOTH_CONNECT permission not granted");
+                return false;
+            }
         }
 
         // Previously connected device.  Try to reconnect.
